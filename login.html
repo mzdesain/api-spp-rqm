@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - RQM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; background-color: #f3f2f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-box { background-color: #ffffff; width: 380px; max-width: 90%; padding: 40px; border-radius: 2px; border: 1px solid #d2d2d2; border-top: 4px solid #107c41; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; }
+        h2 { color: #323130; margin-top: 0; margin-bottom: 5px; font-weight: 700; }
+        p { color: #605e5c; font-size: 13px; margin-bottom: 25px; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        input { width: 100%; padding: 12px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: #107c41; }
+        .btn-primary { background-color: #107c41; color: white; border: none; padding: 12px; width: 100%; font-size: 14px; font-weight: 600; border-radius: 2px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-primary:hover { background-color: #0c5e31; }
+        .btn-back { display: inline-block; margin-top: 20px; color: #605e5c; font-size: 13px; text-decoration: none; }
+        .btn-back:hover { color: #107c41; text-decoration: underline; }
+        #pesanLogin { margin-top: 15px; padding: 10px; display: none; font-size: 13px; border-radius: 2px; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <!-- Sesuaikan lokasi assets/logo.png jika perlu -->
+        <img src="assets\logo.png" alt="Logo RQM" style="width: 70px; height: auto; margin-bottom: 15px; border-radius: 4px;">
+        <h2>Login Admin</h2>
+        <p>Masukkan Username dan Password Anda</p>
+
+        <form id="formLoginAdmin">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" placeholder="Ketik username Anda" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Ketik password Anda" required>
+            </div>
+            <button type="submit" id="btnLogin" class="btn-primary">Masuk ke Panel Admin</button>
+        </form>
+        
+        <div id="pesanLogin"></div>
+        
+        <a href="index.html" class="btn-back">&larr; Kembali ke Halaman Utama</a>
+    </div>
+
+    <!-- Memanggil Script JS -->
+    <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

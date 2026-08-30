@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keuangan - SPP RQM</title>
+   <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://placehold.co/50x50/0056b3/ffffff?text=RQM" alt="Logo" class="sidebar-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">Dashboard</a>
+                <a href="santri.html" class="nav-item">Data Santri</a>
+                <a href="pembayaran.html" class="nav-item">Input Pembayaran</a>
+                <a href="keuangan.html" class="nav-item active">Pemasukan & Pengeluaran</a>
+                <a href="laporan.html" class="nav-item">Laporan & Cetak</a>
+                <a href="data_admin.html" class="nav-item">Data Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="nav-item text-danger">Keluar</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <h2 class="page-title">Pencatatan Keuangan Lainnya</h2>
+                <div class="user-info">Selamat bekerja, <strong>Muzanni</strong></div>
+            </header>
+
+            <div class="content-wrapper" style="width: 100%; box-sizing: border-box;">
+                
+                <!-- Pembungkus Grid: 2 Kolom Bersebelahan -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-items: start;">
+                    
+                    <!-- KOTAK 1: Form Pemasukan -->
+                    <div class="card" style="width: 100%; box-sizing: border-box; border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 30px; background-color: #fff; box-shadow: none; display: block;">
+                        <h3 style="margin-bottom: 25px; font-size: 16px; font-weight: 600; color: #323130; border-bottom: 1px solid #edebe9; padding-bottom: 10px; text-align: left;">Input Pemasukan (Selain SPP)</h3>
+                        
+                        <form id="formTambahPemasukan" style="display: block; width: 100%;">
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="tglPemasukan" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Tanggal</label>
+                                <input type="date" id="tglPemasukan" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; font-family: inherit;" required>
+                            </div>
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="sumberPemasukan" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Sumber Pemasukan</label>
+                                <input type="text" id="sumberPemasukan" placeholder="Contoh: Donasi, Infaq" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                            </div>
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="nominalPemasukan" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Nominal (Rp)</label>
+                                <input type="number" id="nominalPemasukan" placeholder="Contoh: 500000" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                            </div>
+                            <div style="margin-bottom: 25px; display: block; width: 100%; text-align: left;">
+                                <label for="lokasiPemasukan" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Lokasi RQM</label>
+                                <select id="lokasiPemasukan" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; background-color: #fff;" required>
+                                    <option value="RQM 1">RQM 1</option>
+                                    <option value="RQM 2">RQM 2</option>
+                                    <option value="RQM 3">RQM 3</option>
+                                    <option value="Semua Lokasi">Semua Lokasi</option>
+                                </select>
+                            </div>
+                            <div style="text-align: left;">
+                                <button type="submit" id="btnSimpanPemasukan" style="background-color: #107c41; border: none; border-radius: 2px; color: white; padding: 10px 25px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-block;">Simpan Pemasukan</button>
+                            </div>
+                        </form>
+                        <div id="pesanPemasukan" style="margin-top: 15px; display: none; padding: 12px; border-radius: 2px; font-size: 14px; text-align: left; border: 1px solid transparent;"></div>
+                    </div>
+
+                    <!-- KOTAK 2: Form Pengeluaran -->
+                    <div class="card" style="width: 100%; box-sizing: border-box; border: 1px solid #d2d2d2; border-top: 4px solid #c00000; border-radius: 2px; padding: 30px; background-color: #fff; box-shadow: none; display: block;">
+                        <h3 style="margin-bottom: 25px; font-size: 16px; font-weight: 600; color: #323130; border-bottom: 1px solid #edebe9; padding-bottom: 10px; text-align: left;">Input Pengeluaran</h3>
+                        
+                        <form id="formTambahPengeluaran" style="display: block; width: 100%;">
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="tglPengeluaran" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Tanggal</label>
+                                <input type="date" id="tglPengeluaran" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; font-family: inherit;" required>
+                            </div>
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="jenisPengeluaran" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Jenis Pengeluaran</label>
+                                <input type="text" id="jenisPengeluaran" placeholder="Contoh: Beli Spidol, Listrik" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                            </div>
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="nominalPengeluaran" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Nominal (Rp)</label>
+                                <input type="number" id="nominalPengeluaran" placeholder="Contoh: 150000" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                            </div>
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="lokasiPengeluaran" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Lokasi RQM</label>
+                                <select id="lokasiPengeluaran" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; background-color: #fff;" required>
+                                    <option value="RQM 1">RQM 1</option>
+                                    <option value="RQM 2">RQM 2</option>
+                                    <option value="RQM 3">RQM 3</option>
+                                    <option value="Semua Lokasi">Semua Lokasi</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                                <label for="sumberDanaPengeluaran" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Sumber Dana</label>
+                                <select id="sumberDanaPengeluaran" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; background-color: #fff;" required>
+                                    <option value="" disabled selected>-- Pilih Sumber Dana --</option>
+                                    <option value="Dana SPP">Dana SPP</option>
+                                    <option value="Dana Lainnya">Dana Lainnya</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 25px; display: block; width: 100%; text-align: left;">
+                                <label for="keteranganPengeluaran" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Keterangan (Opsional)</label>
+                                <input type="text" id="keteranganPengeluaran" placeholder="Catatan tambahan..." style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;">
+                            </div>
+                            <div style="text-align: left;">
+                                <button type="submit" id="btnSimpanPengeluaran" style="background-color: #c00000; border: none; border-radius: 2px; color: white; padding: 10px 25px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-block;">Simpan Pengeluaran</button>
+                            </div>
+                        </form>
+                        <div id="pesanPengeluaran" style="margin-top: 15px; display: none; padding: 12px; border-radius: 2px; font-size: 14px; text-align: left; border: 1px solid transparent;"></div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

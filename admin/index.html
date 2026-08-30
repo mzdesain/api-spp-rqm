@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - SPP RQM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Memanggil CSS utama -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://placehold.co/50x50/0056b3/ffffff?text=RQM" alt="Logo" class="sidebar-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">Dashboard</a>
+                <a href="santri.html" class="nav-item">Data Santri</a>
+                <a href="pembayaran.html" class="nav-item">Input Pembayaran</a>
+                <a href="keuangan.html" class="nav-item">Pemasukan & Pengeluaran</a>
+                <a href="laporan.html" class="nav-item">Laporan & Cetak</a>
+                <a href="data_admin.html" class="nav-item">Data Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="nav-item text-danger">Keluar</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <h2 class="page-title">Dashboard Keuangan</h2>
+                <div class="user-info">Selamat bekerja, <strong>Muzanni</strong></div>
+            </header>
+
+            <div class="content-wrapper">
+                
+                <!-- Filter Lokasi (Gaya Excel) -->
+                <div class="card" style="width: 100%; max-width: 100%; box-sizing: border-box; border: 1px solid #d2d2d2; border-left: 4px solid #107c41; border-radius: 2px; padding: 15px; margin-bottom: 15px; background-color: #fff; display: flex; align-items: center; gap: 15px; box-shadow: none;">
+                    <label for="filterLokasi" style="font-weight: 600; color: #323130; margin: 0; font-size: 14px;">Filter Data Lokasi:</label>
+                    <select id="filterLokasi" class="form-control" style="width: auto; border: 1px solid #8a8886; border-radius: 2px; padding: 5px 10px; font-size: 13px; outline: none;">
+                        <option value="Semua">Semua Lokasi</option>
+                        <option value="RQM 1">RQM 1</option>
+                        <option value="RQM 2">RQM 2</option>
+                        <option value="RQM 3">RQM 3</option>
+                    </select>
+                </div>
+
+                <!-- Baris Pertama: Info SPP (4 Kotak) -->
+                <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px;">
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #ffffff; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL SANTRI</div>
+                        <div id="totSantri" style="font-size: 24px; font-weight: 700; color: #323130; margin-top: 5px;">...</div>
+                    </div>
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #ffffff; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">SANTRI LUNAS (BULAN INI)</div>
+                        <div id="totLunas" style="font-size: 24px; font-weight: 700; color: #107c41; margin-top: 5px;">...</div>
+                    </div>
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #c00000; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #ffffff; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">SANTRI MENUNGGAK</div>
+                        <div id="totNunggak" style="font-size: 24px; font-weight: 700; color: #c00000; margin-top: 5px;">...</div>
+                    </div>
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #ffffff; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">PEMASUKAN BULAN INI</div>
+                        <div id="totPemasukan" style="font-size: 24px; font-weight: 700; color: #107c41; margin-top: 5px;">Rp 0</div>
+                    </div>
+                </div>
+
+                <!-- Baris Kedua: Keuangan Lainnya dan Keseluruhan (4 Kotak) -->
+                <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px;">
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #ffffff; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">PEMASUKAN LAIN (BULAN INI)</div>
+                        <div id="totPemasukanLain" style="font-size: 24px; font-weight: 700; color: #107c41; margin-top: 5px;">Rp 0</div>
+                    </div>
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #c00000; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #ffffff; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">PENGELUARAN (BULAN INI)</div>
+                        <div id="totPengeluaran" style="font-size: 24px; font-weight: 700; color: #c00000; margin-top: 5px;">Rp 0</div>
+                    </div>
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #faf9f8; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL PEMASUKAN (SEMUA)</div>
+                        <div id="totPemasukanSemua" style="font-size: 24px; font-weight: 700; color: #107c41; margin-top: 5px;">Rp 0</div>
+                    </div>
+                    <div class="card stat-card" style="border: 1px solid #d2d2d2; border-top: 4px solid #c00000; border-radius: 2px; padding: 15px; display: flex; flex-direction: column; justify-content: center; background-color: #faf9f8; box-shadow: none;">
+                        <div style="font-size: 11px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL PENGELUARAN (SEMUA)</div>
+                        <div id="totPengeluaranSemua" style="font-size: 24px; font-weight: 700; color: #c00000; margin-top: 5px;">Rp 0</div>
+                    </div>
+                </div>
+
+                <!-- Baris Ketiga: Saldo Akhir (Gaya Baris Ringkasan Excel) -->
+                <div style="width: 100%; margin-bottom: 25px;">
+                    <div class="card stat-card" style="width: 100%; max-width: 100%; box-sizing: border-box; border: 1px solid #107c41; border-radius: 2px; padding: 20px 25px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; background-color: #e6f2eb; box-shadow: none;">
+                        <div style="font-size: 14px; font-weight: 700; color: #107c41; text-transform: uppercase;">TOTAL SALDO TERSISA (SEMUA LOKASI)</div>
+                        <div id="totSaldoSemua" style="font-size: 32px; font-weight: 700; color: #107c41;">Rp 0</div>
+                    </div>
+                </div>
+                </main>
+            </div>
+
+    <!-- Script Utama -->
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

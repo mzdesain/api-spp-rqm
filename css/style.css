@@ -1,0 +1,561 @@
+/* css/style.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    /* Background diubah ke biru menyesuaikan dengan contoh referensi UI */
+    background-color: #4b7bec;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.portal-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Diubah ke min-height agar responsif di HP */
+}
+
+/* --- Layout Split (Dua Kolom) --- */
+.card {
+    background: #fff;
+    border-radius: 8px; /* Dibuat sedikit membulat di sudut luar agar harmonis */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 850px; /* Diperlebar untuk menampung dua sisi */
+    display: flex; /* Menggunakan flexbox untuk membagi sisi kiri dan kanan */
+    overflow: hidden; /* Agar sudut gambar terpotong rapi mengikuti border-radius */
+}
+
+/* Bagian Kiri (Foto) */
+.card-image {
+    flex: 1; /* Mengambil proporsi 50% ruang */
+    background-color: #f8f9fa;
+    display: flex;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Memastikan foto penuh menutupi bingkai tanpa gepeng */
+}
+
+/* Bagian Kanan (Konten Portal) */
+.card-content {
+    flex: 1; /* Mengambil proporsi 50% ruang sisanya */
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* --- Styling Logo (TETAP) --- */
+.logo-container {
+    margin-bottom: 15px;
+}
+
+.logo {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    padding: 5px;
+    background: #f8f9fa;
+}
+
+/* --- Styling Teks (TETAP) --- */
+.card h1 {
+    color: #212529;
+    font-size: 24px;
+    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+}
+
+.card p.subtitle {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 20px;
+}
+
+/* --- Styling Tombol ala POS/Kasir (TETAP) --- */
+.portal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    border: 1px solid transparent;
+}
+
+.btn-primary {
+    background-color: #0056b3;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004494;
+    border-color: #00387a;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-color: #ced4da;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+}
+
+/* --- Styling Footer (TETAP) --- */
+.card-footer {
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px dashed #dee2e6;
+}
+
+.card-footer p {
+    color: #adb5bd;
+    font-size: 12px;
+    margin: 0;
+}
+
+/* --- Media Query untuk Tampilan HP (Responsive) --- */
+@media (max-width: 768px) {
+    .card {
+        flex-direction: column; /* Mengubah susunan menjadi atas-bawah */
+        max-width: 400px; /* Menyesuaikan lebar untuk HP */
+    }
+
+    .card-image {
+        height: 220px; /* Menentukan tinggi fix untuk gambar di versi HP */
+        flex: none;
+    }
+
+    .card-content {
+        padding: 35px 30px; /* Sedikit mengurangi padding di versi HP */
+    }
+}
+
+/* --- Tambahan Styling untuk Form Input --- */
+.form-container {
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 3px; /* Sudut tajam konsisten dengan tombol */
+    transition: all 0.2s ease-in-out;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.form-control:focus {
+    border-color: #0056b3;
+    outline: none;
+    background-color: #fff;
+    box-shadow: inset 3px 0 0 #0056b3; /* Aksen garis biru saat diklik */
+}
+
+/* Penyesuaian tombol button agar sama dengan tag <a> */
+button.btn {
+    cursor: pointer;
+    width: 100%;
+    border: none;
+}
+
+/* --- Tambahan Styling untuk Dashboard Admin --- */
+.admin-body {
+    background-color: #f4f6f9; /* Warna abu-abu terang khas dashboard */
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 250px;
+    background-color: #343a40; /* Warna gelap ala AdminLTE */
+    color: #c2c7d0;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid #4b545c;
+}
+
+.sidebar-logo {
+    border-radius: 4px;
+}
+
+.sidebar-header h2 {
+    color: #fff;
+    font-size: 18px;
+}
+
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+}
+
+.nav-item {
+    padding: 12px 20px;
+    color: #c2c7d0;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: #494e53;
+    color: #fff;
+    border-left: 4px solid #0056b3;
+}
+
+.sidebar-footer {
+    padding: 15px 0;
+    border-top: 1px solid #4b545c;
+}
+
+.text-danger { color: #dc3545 !important; }
+.text-success { color: #28a745 !important; }
+.text-primary { color: #0056b3 !important; }
+
+/* --- Main Content --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.topbar {
+    background-color: #fff;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.page-title {
+    font-size: 20px;
+    color: #212529;
+    font-weight: 600;
+}
+
+.user-profile {
+    font-size: 14px;
+    color: #495057;
+}
+
+.content-wrapper {
+    padding: 25px;
+}
+
+/* --- Dashboard Cards --- */
+.filter-bar {
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-left: 4px solid #28a745;
+}
+
+.filter-bar label {
+    font-weight: 600;
+    margin-right: 10px;
+    color: #495057;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.summary-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-top: 3px solid #dee2e6;
+}
+
+.summary-card:nth-child(1) { border-top-color: #17a2b8; } /* Cyan */
+.summary-card:nth-child(2) { border-top-color: #28a745; } /* Green */
+.summary-card:nth-child(3) { border-top-color: #dc3545; } /* Red */
+.summary-card:nth-child(4) { border-top-color: #0056b3; } /* Blue */
+
+.card-title {
+    font-size: 14px;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.card-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #343a40;
+}
+
+/* --- Responsive untuk Admin (Mobile) --- */
+@media (max-width: 768px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    
+    .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 5px;
+    }
+    
+    .nav-item {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+        border-left: none;
+        border-bottom: 4px solid transparent;
+    }
+
+    .nav-item:hover, .nav-item.active {
+        border-left: none;
+        border-bottom: 4px solid #0056b3;
+    }
+}
+
+/* =========================================
+   TEMA MURNI MICROSOFT EXCEL (CLEAN & FLAT)
+========================================= */
+/* 1. Background & Font (Segoe UI) */
+body.admin-body { 
+    background-color: #f3f2f1; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+/* 2. Sidebar Bersih */
+.sidebar { background-color: #ffffff; border-right: 1px solid #d2d2d2; }
+.sidebar-header { background-color: #107c41; border-bottom: none; }
+.sidebar-header h2 { color: #ffffff; font-weight: 600; font-size: 20px; }
+
+/* 3. Menu Sidebar */
+.nav-item { color: #605e5c; border-radius: 0; margin: 2px 0; font-weight: 500; border-left: 4px solid transparent; transition: 0.2s; }
+.nav-item.active, .nav-item:hover { 
+    background-color: #e6f2eb; 
+    color: #107c41; 
+    border-left: 4px solid #107c41; 
+    font-weight: 600; 
+}
+
+/* 4. Topbar */
+.topbar { background-color: #ffffff; border-bottom: 1px solid #d2d2d2; box-shadow: none; }
+.page-title { color: #107c41; font-weight: 600; font-size: 20px; margin: 0; }
+.user-info { font-weight: 400; color: #323130; font-size: 14px; }
+.user-info strong { color: #107c41; font-weight: 600; }
+
+/* 5. Kotak Data (Garis tegas, sudut kaku, tanpa bayangan) */
+.card, .stat-card {
+    border: 1px solid #d2d2d2 !important;
+    border-top: 4px solid #107c41 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+    padding: 15px !important;
+}
+
+/* Warna merah khusus untuk tunggakan/pengeluaran */
+.stat-card[style*="c00000"] { border-top: 4px solid #c00000 !important; }
+
+/* 6. Form Input & Tombol (Kotak & Flat) */
+.form-control, input, select {
+    border-radius: 2px !important;
+    border: 1px solid #8a8886 !important;
+    padding: 8px 12px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    outline: none;
+    background-color: #ffffff;
+}
+.form-control:focus, input:focus, select:focus {
+    border-color: #107c41 !important;
+}
+
+button[type="submit"], .btn-primary {
+    border-radius: 2px !important;
+    background-color: #107c41;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+button[type="submit"]:hover, .btn-primary:hover {
+    background-color: #0c5e31;
+}
+
+/* 7. Tabel ala Spreadsheet */
+table { border-collapse: collapse; width: 100%; border: 1px solid #d2d2d2; }
+th { 
+    background-color: #f3f2f1; 
+    color: #323130; 
+    border: 1px solid #d2d2d2; 
+    padding: 10px; 
+    text-transform: uppercase; 
+    font-size: 12px; 
+    font-weight: 600;
+}
+td { 
+    border: 1px solid #d2d2d2; 
+    padding: 10px; 
+    color: #323130; 
+    font-size: 13px;
+}
+
+/* ==========================================
+   RESPONSIF UNTUK LAYAR KECIL / HP & TABLET
+========================================= */
+
+@media (max-width: 768px) {
+    /* Ubah tata letak utama menjadi bertumpuk (atas ke bawah) */
+    .admin-layout {
+        flex-direction: column !important;
+    }
+
+    /* Sidebar berubah menjadi menu horizontal di atas */
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        border-right: none !important;
+        border-bottom: 1px solid #d2d2d2;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        padding: 5px;
+    }
+
+    .nav-item {
+        flex: 1;
+        min-width: 110px;
+        text-align: center;
+        padding: 8px 5px !important;
+        font-size: 12px;
+    }
+
+    /* Area konten utama menyesuaikan */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    /* Grid kartu statistik (Dashboard) berubah jadi 1 atau 2 kolom saja */
+    .dashboard-cards {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Topbar agar tidak terlalu sesak di layar HP */
+    .topbar {
+        padding: 10px 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .user-info {
+        font-size: 12px;
+    }
+}
+
+.sidebar-logo {
+    width: 50px;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px auto;
+}
+
+.sidebar-header {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.sidebar-logo {
+    width: 80px;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px auto;
+    
+    /* Tambahan Background Putih */
+    background-color: #ffffff;
+    padding: 10px; /* Memberi jarak antara logo dan tepi kotak putih */
+    border-radius: 10px; /* Membuat sudut kotak putihnya sedikit melengkung */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Memberi efek bayangan lembut */
+}

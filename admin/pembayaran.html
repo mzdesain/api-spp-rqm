@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Pembayaran - SPP RQM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://placehold.co/50x50/0056b3/ffffff?text=RQM" alt="Logo" class="sidebar-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">Dashboard</a>
+                <a href="santri.html" class="nav-item">Data Santri</a>
+                <a href="pembayaran.html" class="nav-item active">Input Pembayaran</a>
+                <a href="keuangan.html" class="nav-item">Pemasukan & Pengeluaran</a>
+                <a href="laporan.html" class="nav-item">Laporan & Cetak</a>
+                <a href="data_admin.html" class="nav-item">Data Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="nav-item text-danger">Keluar</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <h2 class="page-title">Catat Pembayaran SPP</h2>
+                <div class="user-info">Selamat bekerja, <strong>Muzanni</strong></div>
+            </header>
+
+            <div class="content-wrapper" style="width: 100%; box-sizing: border-box;">
+                <div class="card" style="width: 100%; max-width: 100%; box-sizing: border-box; border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 30px; background-color: #fff; box-shadow: none; margin-bottom: 20px; display: block;">
+                    <h3 style="margin-bottom: 25px; font-size: 18px; font-weight: 600; color: #323130; border-bottom: 1px solid #edebe9; padding-bottom: 10px; text-align: left;">Form Pembayaran Bulanan</h3>
+                    
+                    <form id="formTambahPembayaran" style="display: block; width: 100%;">
+                        
+                        <!-- Input Pencarian Santri (Live Search) -->
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="cariSantri" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Cari Santri</label>
+                            <input type="text" id="cariSantri" placeholder="Ketik nama atau No. Registrasi untuk mencari..." style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;">
+                        </div>
+
+                        <!-- Dropdown Hasil Pencarian -->
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="regBayar" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Pilih Santri (Hasil Pencarian)</label>
+                            <select id="regBayar" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; background-color: #fff;" required>
+                                <option value="" disabled selected>Memuat data santri...</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="tglBayar" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Tanggal Pembayaran</label>
+                            <input type="date" id="tglBayar" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; font-family: inherit;" required>
+                        </div>
+
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="tahunAjaranBayar" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Tahun Ajaran</label>
+                            <input type="text" id="tahunAjaranBayar" placeholder="Contoh: 2026" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                        </div>
+
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="bulanBayar" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Bulan Pembayaran</label>
+                            <select id="bulanBayar" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; background-color: #fff;" required>
+                                <option value="" disabled selected>-- Pilih Bulan --</option>
+                                <option value="Juli">Juli</option>
+                                <option value="Agustus">Agustus</option>
+                                <option value="September">September</option>
+                                <option value="Oktober">Oktober</option>
+                                <option value="November">November</option>
+                                <option value="Desember">Desember</option>
+                                <option value="Januari">Januari</option>
+                                <option value="Februari">Februari</option>
+                                <option value="Maret">Maret</option>
+                                <option value="April">April</option>
+                                <option value="Mei">Mei</option>
+                                <option value="Juni">Juni</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 25px; display: block; width: 100%; text-align: left;">
+                            <label for="nominalBayar" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Nominal Pembayaran (Rp)</label>
+                            <input type="number" id="nominalBayar" placeholder="Contoh: 1200000" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                        </div>
+                        
+                        <div style="text-align: left;">
+                            <button type="submit" id="btnSimpanBayar" style="background-color: #107c41; border: none; border-radius: 2px; color: white; padding: 10px 30px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-block;">Simpan Pembayaran</button>
+                        </div>
+                    </form>
+
+                    <div id="pesanBayar" style="margin-top: 20px; display: none; padding: 12px; border-radius: 2px; font-size: 14px; border: 1px solid transparent; text-align: left;"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

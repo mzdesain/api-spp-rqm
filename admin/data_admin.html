@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Data Admin - RQM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="admin-body">
+
+    <div class="admin-layout">
+    <!-- Sidebar Admin -->
+    <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="..\assets\logo.png" alt="Logo" class="sidebar-logo">
+                <h2>Admin Panel</h2>
+            </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">Dashboard</a>
+            <a href="santri.html" class="nav-item">Data Santri</a>
+            <a href="pembayaran.html" class="nav-item">Input Pembayaran</a>
+            <a href="keuangan.html" class="nav-item">Pemasukan & Pengeluaran</a>
+            <a href="laporan.html" class="nav-item">Laporan & Cetak</a>
+            <a href="data_admin.html" class="nav-item active">Data Admin</a>
+        </nav>
+        <a href="../index.html" class="nav-item logout-btn">Keluar</a>
+    </aside>
+
+    <!-- Konten Utama -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1 class="page-title">Kelola Data Admin</h1>
+            <div class="user-info">Selamat bekerja, <strong>Muzanni</strong></div>
+        </header>
+
+        <div class="content-wrapper" style="width: 100%; box-sizing: border-box; display: block;">
+            
+            <!-- Kotak Form Tambah Admin -->
+            <div style="width: 100%; display: block; box-sizing: border-box; border: 1px solid #d2d2d2; border-left: 4px solid #107c41; border-radius: 2px; padding: 25px; background-color: #fff; margin-bottom: 25px;">
+                <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; font-weight: 600; color: #323130; border-bottom: 1px solid #edebe9; padding-bottom: 10px; display: block;">Form Tambah Admin Baru</h3>
+                
+                <form id="formTambahAdmin" style="display: block; width: 100%;">
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end;">
+                        
+                        <div style="flex: 1; min-width: 200px;">
+                            <label for="namaAdmin" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Nama Lengkap</label>
+                            <input type="text" id="namaAdmin" placeholder="Contoh: Fulan Bin Fulan" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; outline: none; display: block;" required>
+                        </div>
+                        
+                        <div style="flex: 1; min-width: 200px;">
+                            <label for="usernameAdmin" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Username (Untuk Login)</label>
+                            <input type="text" id="usernameAdmin" placeholder="Contoh: admin_rqm" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; outline: none; display: block;" required>
+                        </div>
+
+                        <div style="flex: 1; min-width: 200px;">
+                            <label for="passwordAdmin" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; margin-bottom: 8px; display: block;">Password</label>
+                            <input type="password" id="passwordAdmin" placeholder="Masukkan password kuat" style="width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; outline: none; display: block;" required>
+                        </div>
+                        
+                        <div>
+                            <button type="submit" id="btnSimpanAdmin" style="background-color: #107c41; color: white; border: none; padding: 11px 25px; border-radius: 2px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-block;">Simpan Admin</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="pesanAdmin" style="margin-top: 15px; display: none; padding: 12px; border-radius: 2px; font-size: 14px; text-align: left; border: 1px solid transparent;"></div>
+            </div>
+
+            <!-- Kotak Tabel Daftar Admin -->
+            <div style="width: 100%; display: block; box-sizing: border-box; border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 25px; background-color: #fff;">
+                <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; font-weight: 600; color: #323130; display: block;">Daftar Pengurus / Admin</h3>
+                
+                <div style="width: 100%; overflow-x: auto; display: block;">
+                    <table style="width: 100%; min-width: 600px; border-collapse: collapse; text-align: left; font-size: 14px; border: 1px solid #d2d2d2;">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130; text-align: center;">No</th>
+                                <th style="width: 35%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Nama Lengkap</th>
+                                <th style="width: 30%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Username</th>
+                                <th style="width: 30%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelDataAdmin">
+                            <tr>
+                                <td colspan="4" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #605e5c;">Sedang memuat data admin...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+    </div>
+
+    <!-- Memanggil file script -->
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

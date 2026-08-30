@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pembayaran SPP RQM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Mengatur background layar ala Excel */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f2f1; /* Warna abu-abu terang Office */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        /* Container Utama dengan Garis Hijau di Atas */
+        .login-container {
+            display: flex;
+            width: 900px;
+            max-width: 95%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 2px; /* Sudut tegas */
+            border: 1px solid #d2d2d2;
+            border-top: 4px solid #107c41; /* Hijau Excel */
+            overflow: hidden;
+        }
+
+        /* Bagian Kiri (Placeholder Foto) */
+        .login-left {
+            flex: 1;
+            background-color: #edebe9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #a19f9d;
+            font-size: 24px;
+            font-weight: 600;
+            border-right: 1px solid #d2d2d2;
+        }
+
+        /* Bagian Kanan (Area Tombol Login) */
+        .login-right {
+            flex: 1;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Logo RQM Kotak (Sudah Diganti Gambar) */
+        .logo-box {
+            margin-bottom: 20px;
+        }
+
+        /* Teks Judul */
+        .app-title {
+            font-size: 24px;
+            color: #323130;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+        .app-subtitle {
+            font-size: 14px;
+            color: #605e5c;
+            margin-top: 0;
+            margin-bottom: 35px;
+        }
+
+        /* Tombol Utama (Hijau) */
+        .btn-primary {
+            background-color: #107c41;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 2px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0c5e31;
+        }
+
+        /* Tombol Sekunder (Putih Outline) */
+        .btn-secondary {
+            background-color: #ffffff;
+            color: #323130;
+            border: 1px solid #8a8886;
+            padding: 12px 20px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #f3f2f1;
+        }
+
+        /* Garis Pemisah Bawah */
+        .divider {
+            width: 100%;
+            border-top: 1px dashed #d2d2d2;
+            margin: 35px 0 20px 0;
+        }
+        .version {
+            font-size: 12px;
+            color: #a19f9d;
+        }
+        
+        /* Agar Tetap Bagus Saat Dibuka di HP */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                width: 100%;
+                height: 100vh;
+                border: none;
+                border-radius: 0;
+            }
+            .login-left {
+                display: none; /* Sembunyikan area foto jika layar sempit */
+            }
+            .login-right {
+                padding: 30px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TAG PEMBUNGKUS INI YANG TADI HILANG -->
+    <div class="login-container">
+        
+        <!-- Area Kiri (Menampilkan Foto Gedung Asli) -->
+        <div class="login-left" style="background-image: url('assets/Foto Gedung.jpeg'); background-size: cover; background-position: center;">
+            <!-- Teks dihapus agar foto tampil penuh -->
+        </div>
+
+        <!-- Area Kanan -->
+        <div class="login-right">
+            <!-- Ganti bagian src ini dengan file logomu (misal: assets/logo.png) -->
+            <img src="assets\Foto Gedung.jpeg" alt="Logo RQM" style="width: 80px; height: auto; margin-bottom: 15px; border-radius: 4px;">
+            <h1 class="app-title">Rumah Qur'an Mahir</h1>
+            <p class="app-subtitle">Sistem Informasi Pembayaran SPP</p>
+            
+            <!-- Link menuju halaman Orang Tua & Admin -->
+            <a href="ortu/index.html" class="btn-primary">Masuk sebagai Orang Tua</a>
+            <a href="login.html" class="btn-secondary">Masuk sebagai Admin</a>
+            
+            <div class="divider"></div>
+            <div class="version">Versi 1.0.0</div>
+        </div>
+
+    </div>
+
+</body>
+</html>

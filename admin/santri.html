@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Santri - SPP RQM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Memanggil CSS utama -->
+   <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="..\assets\logo.png" alt="Logo" class="sidebar-logo">
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">Dashboard</a>
+                <a href="santri.html" class="nav-item active">Data Santri</a>
+                <a href="pembayaran.html" class="nav-item">Input Pembayaran</a>
+                <a href="keuangan.html" class="nav-item">Pemasukan & Pengeluaran</a>
+                <a href="laporan.html" class="nav-item">Laporan & Cetak</a>
+                <a href="data_admin.html" class="nav-item">Data Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="nav-item text-danger">Keluar</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <h2 class="page-title">Kelola Data Santri</h2>
+                <div class="user-info">Selamat bekerja, <strong>Muzanni</strong></div>
+            </header>
+
+            <div class="content-wrapper" style="width: 100%; box-sizing: border-box;">
+                <div class="card" style="width: 100%; max-width: 100%; box-sizing: border-box; border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 30px; background-color: #fff; box-shadow: none; margin-bottom: 20px; display: block;">
+                    <h3 style="margin-bottom: 25px; font-size: 18px; font-weight: 600; color: #323130; border-bottom: 1px solid #edebe9; padding-bottom: 10px; text-align: left;">Form Tambah Santri Baru</h3>
+                    
+                    <!-- Class 'form-container' sengaja dihapus agar tidak bentrok dengan style bawaan -->
+                    <form id="formTambahSantri" style="display: block; width: 100%;">
+                        
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="regSantri" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Nomor Registrasi</label>
+                            <input type="text" id="regSantri" placeholder="Contoh: RQM001" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="namaSantri" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Nama Santri</label>
+                            <input type="text" id="namaSantri" placeholder="Masukkan nama lengkap santri" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="lokasiRQM" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Lokasi RQM</label>
+                            <select id="lokasiRQM" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block; background-color: #fff;" required>
+                                <option value="" disabled selected>-- Pilih Lokasi --</option>
+                                <option value="RQM 1">RQM 1</option>
+                                <option value="RQM 2">RQM 2</option>
+                                <option value="RQM 3">RQM 3</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px; display: block; width: 100%; text-align: left;">
+                            <label for="tahunAjaran" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Tahun Ajaran</label>
+                            <input type="text" id="tahunAjaran" placeholder="Contoh: 2026" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px; display: block; width: 100%; text-align: left;">
+                            <label for="nominalSPP" style="font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Nominal SPP (Rp)</label>
+                            <input type="number" id="nominalSPP" placeholder="Contoh: 1200000" style="width: 100%; max-width: 100%; border: 1px solid #8a8886; border-radius: 2px; padding: 10px 12px; font-size: 14px; box-sizing: border-box; outline: none; display: block;" required>
+                        </div>
+                        
+                        <div style="text-align: left;">
+                            <button type="submit" id="btnSimpanSantri" style="background-color: #107c41; border: none; border-radius: 2px; color: white; padding: 10px 30px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-block;">Simpan Data Santri</button>
+                        </div>
+                    </form>
+
+                    <div id="pesanSantri" style="margin-top: 20px; display: none; padding: 12px; border-radius: 2px; font-size: 14px; border: 1px solid transparent; text-align: left;"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script Utama -->
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

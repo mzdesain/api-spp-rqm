@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek SPP Santri - RQM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Tema Dasar ala Excel */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f2f1; /* Abu-abu terang Office */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Kotak Utama */
+        .ortu-container {
+            background-color: #ffffff;
+            width: 450px;
+            max-width: 90%;
+            padding: 40px;
+            border-radius: 2px; /* Sudut tegas */
+            border: 1px solid #d2d2d2;
+            border-top: 4px solid #107c41; /* Hijau Excel */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Judul */
+        h2 {
+            color: #323130;
+            font-size: 22px;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+        p {
+            color: #605e5c;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        /* Form Label & Input */
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #605e5c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            font-family: inherit;
+        }
+        input:focus {
+            border-color: #107c41;
+        }
+
+        /* Tombol */
+        .btn-primary {
+            background-color: #107c41;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 2px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0c5e31;
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: #323130;
+            border: 1px solid #8a8886;
+            padding: 12px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #f3f2f1;
+        }
+
+        /* Area Riwayat (Penyesuaian Tabel dari JS agar mirip Excel) */
+        #areaRiwayat {
+            margin-top: 25px;
+            text-align: left;
+            display: none;
+            border-top: 1px solid #d2d2d2;
+            padding-top: 20px;
+        }
+        
+        #areaRiwayat table {
+            border: 1px solid #d2d2d2 !important;
+        }
+        #areaRiwayat th {
+            background-color: #f3f2f1 !important;
+            color: #323130 !important;
+            border-bottom: 2px solid #107c41 !important;
+            font-size: 12px !important;
+            text-transform: uppercase;
+        }
+        #areaRiwayat td {
+            border-bottom: 1px solid #edebe9 !important;
+            color: #323130 !important;
+        }
+        #areaRiwayat h3 {
+            color: #107c41 !important;
+            border-bottom: none !important;
+            font-size: 15px !important;
+            margin-bottom: 15px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ortu-container">
+        <!-- Menampilkan Logo dari folder utama -->
+        <img src="..\assets\logo.png" alt="Logo RQM" style="width: 70px; height: auto; margin-bottom: 15px; border-radius: 4px;">
+        
+        <h2>Cek SPP Santri</h2>
+        <p>Masukkan data santri untuk melihat riwayat</p>
+
+        <form id="formOrtu">
+            <div class="form-group">
+                <label for="namaSantri">Nama Santri/Siswa</label>
+                <input type="text" id="namaSantri" placeholder="Contoh: Fulan" required>
+            </div>
+            <div class="form-group">
+                <label for="noRegistrasi">Nomor Registrasi</label>
+                <input type="text" id="noRegistrasi" placeholder="Contoh: RQM001" required>
+            </div>
+            
+            <button type="submit" id="btnCari" class="btn-primary">Cari Data Pembayaran</button>
+            <a href="../index.html" class="btn-secondary">Kembali</a>
+        </form>
+
+        <!-- Area untuk menampilkan tabel riwayat dari JS -->
+        <div id="areaRiwayat"></div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>
