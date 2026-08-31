@@ -188,7 +188,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 nama_santri: document.getElementById("namaSantri").value,
                 lokasi_rqm: document.getElementById("lokasiRQM").value,
                 tahun_ajaran: document.getElementById("tahunAjaran").value,
-                nominal_spp: document.getElementById("nominalSPP").value
+                nominal_spp: document.getElementById("nominalSPP").value,
+                nomor_whatsapp: document.getElementById("waSantri").value // <-- TAMBAHAN WA
             };
             
             // Tampilan loading
@@ -651,7 +652,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function loadDataAdmin() {
     const tbody = document.getElementById("tabelDataAdmin");
-    tbody.innerHTML = '<tr><td colspan="4" style="border: 1px solid #d2d2d2; padding: 20px; text-align: center; color: #605e5c;">Memuat daftar admin...</td></tr>';
+    tbody.innerHTML = '<tr><td style="border: 1px solid #d2d2d2; padding: 10px 12px; text-align: center;">
+    <button onclick="hapusAdmin('${item.username}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; border-radius: 2px; cursor: pointer; font-size: 12px;">Hapus</button>
+</td></tr>';
 
     fetch(`${API_URL}?action=get_admin`)
         .then(response => response.json())
@@ -891,3 +894,92 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+
+// ==========================================
+// FITUR HAPUS ADMIN & SANTRI
+// ==========================================
+window.hapusAdmin = function(username) {
+    if(confirm("Yakin ingin menghapus admin " + username + "?")) {
+        fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "hapus_admin", username: username }) })
+        .then(res => res.json()).then(data => {
+            alert(data.message); if(data.status === "success") loadDataAdmin();
+        }).catch(err => alert("Error koneksi"));
+    }
+}
+
+window.hapusSantri = function(noReg) {
+    if(confirm("Yakin ingin menghapus data santri dengan No. Reg " + noReg + "?")) {
+        fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "hapus_santri", nomor_registrasi: noReg }) })
+        .then(res => res.json()).then(data => {
+            alert(data.message); if(data.status === "success") loadTabelSantri();
+        }).catch(err => alert("Error koneksi"));
+    }
+}
+
+// ==========================================
+// TAMPILKAN TABEL SANTRI
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.getElementById("tabelDataSantri")) loadTabelSantri();
+});
+
+function loadTabelSantri() {
+    let tbody = document.getElementById("tabelDataSantri");
+    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Memuat data...</td></tr>";
+    fetch(`${API_URL}?action=get_data_santri`)
+    .then(res => res.json()).then(data => {
+        if(data.status === "success") {
+            tbody.innerHTML = "";
+            data.data.forEach(item => {
+                let nominal = Number(item.nominal).toLocaleString('id-ID');
+                tbody.innerHTML += `<tr>
+                    <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
+                    <td>${item.lokasi}</td><td>Rp ${nominal}</td><td>${item.nomor_whatsapp}</td>
+                    <td style="text-align: center;"><button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">Hapus</button></td>
+                </tr>`;
+            });
+        }
+    });
+}
+
+// ==========================================
+// FITUR TUNGGAKAN & WHATSAPP
+// ==========================================
+if (document.getElementById("btnCekTunggakan")) {
+    document.getElementById("btnCekTunggakan").addEventListener("click", function() {
+        let lokasi = document.getElementById("filterLokasiTunggakan").value;
+        let tahun = document.getElementById("filterTahunTunggakan").value;
+        let bulan = document.getElementById("filterBulanTunggakan").value;
+        let tbody = document.getElementById("tabelTunggakan");
+        
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Mencari data tunggakan...</td></tr>";
+        
+        fetch(`${API_URL}?action=get_tunggakan&lokasi=${lokasi}&bulan=${bulan}&tahun_ajaran=${tahun}`)
+        .then(res => res.json()).then(data => {
+            if(data.status === "success") {
+                tbody.innerHTML = "";
+                if(data.data.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
+                } else {
+                    data.data.forEach(item => {
+                        let nominal = Number(item.nominal).toLocaleString('id-ID');
+                        
+                        // Format WA: Ubah 08 menjadi 628
+                        let noWA = item.nomor_whatsapp.replace(/\D/g, "");
+                        if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
+                        
+                        // Pesan WA Otomatis
+                        let pesan = `Assalamu'alaikum. Pemberitahuan dari Admin RQM. Mohon maaf, SPP ananda *${item.nama_santri}* untuk bulan *${bulan}* (Rp ${nominal}) belum tercatat lunas. Mohon konfirmasinya. Terima kasih.`;
+                        let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
+
+                        tbody.innerHTML += `<tr>
+                            <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
+                            <td>${item.lokasi}</td><td>Rp ${nominal}</td>
+                            <td style="text-align: center;">${linkWA}</td>
+                        </tr>`;
+                    });
+                }
+            }
+        });
+    });
+}
