@@ -652,9 +652,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function loadDataAdmin() {
     const tbody = document.getElementById("tabelDataAdmin");
-    tbody.innerHTML = '<tr><td style="border: 1px solid #d2d2d2; padding: 10px 12px; text-align: center;">
-    <button onclick="hapusAdmin('${item.username}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; border-radius: 2px; cursor: pointer; font-size: 12px;">Hapus</button>
-</td></tr>';
+    // Teks Loading awal
+    tbody.innerHTML = '<tr><td colspan="4" style="border: 1px solid #d2d2d2; padding: 20px; text-align: center; color: #605e5c;">Memuat daftar admin...</td></tr>';
 
     fetch(`${API_URL}?action=get_admin`)
         .then(response => response.json())
@@ -670,7 +669,10 @@ function loadDataAdmin() {
                             <td style="border: 1px solid #d2d2d2; padding: 10px 12px; text-align: center; color: #323130;">${index + 1}</td>
                             <td style="border: 1px solid #d2d2d2; padding: 10px 12px; color: #323130; font-weight: 500;">${item.nama}</td>
                             <td style="border: 1px solid #d2d2d2; padding: 10px 12px; color: #605e5c;">${item.username}</td>
-                            <td style="border: 1px solid #d2d2d2; padding: 10px 12px; text-align: center; color: #a19f9d;">Akun Aktif</td>
+                            <td style="border: 1px solid #d2d2d2; padding: 10px 12px; text-align: center;">
+                                <!-- TOMBOL HAPUS YANG BENAR ADA DI SINI -->
+                                <button onclick="hapusAdmin('${item.username}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; border-radius: 2px; cursor: pointer; font-size: 12px;">Hapus</button>
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     });
