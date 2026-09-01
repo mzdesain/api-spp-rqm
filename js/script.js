@@ -948,6 +948,27 @@ function loadTabelSantri() {
 // FITUR TUNGGAKAN & WHATSAPP
 // ==========================================
 if (document.getElementById("btnCekTunggakan")) {
+    
+    // 1. SCRIPT OTOMATISASI TAHUN AJARAN DINAMIS
+    const selectTahun = document.getElementById("filterTahunTunggakan");
+    if (selectTahun) {
+        selectTahun.innerHTML = ""; // Hapus bawaan HTML
+        let tahunSekarang = new Date().getFullYear();
+        let bulanSekarang = new Date().getMonth() + 1;
+        // Jika bulan Juli ke atas, berarti sudah masuk tahun ajaran baru
+        let tahunMulai = bulanSekarang >= 7 ? tahunSekarang : tahunSekarang - 1;
+        
+        // Membentuk dropdown dari 1 tahun sebelumnya sampai 2 tahun ke depan
+        for (let i = -1; i <= 2; i++) {
+            let formatTahun = `${tahunMulai + i}/${tahunMulai + i + 1}`;
+            let option = document.createElement("option");
+            option.value = formatTahun;
+            option.textContent = formatTahun;
+            if (i === 0) option.selected = true; // Default selalu tahun berjalan
+            selectTahun.appendChild(option);
+        }
+    }
+
     document.getElementById("btnCekTunggakan").addEventListener("click", function() {
         let tbody = document.getElementById("tabelTunggakan");
         
@@ -958,7 +979,6 @@ if (document.getElementById("btnCekTunggakan")) {
             
             tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Mencari data tunggakan...</td></tr>";
             
-            // 1. URL diamankan (encodeURIComponent) agar garis miring di "2025/2026" tidak merusak link
             let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}`;
             
             fetch(urlAman)
@@ -972,12 +992,13 @@ if (document.getElementById("btnCekTunggakan")) {
                         data.data.forEach(item => {
                             let nominal = Number(item.nominal).toLocaleString('id-ID');
                             
-                            // 2. Mencegah error jika nomor WA dari Google Sheets terbaca sebagai Angka (Number)
                             let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
                             let noWA = waMentah.replace(/\D/g, "");
                             if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
                             
-                            let pesan = `Assalamu'alaikum. Pemberitahuan dari Admin RQM. Mohon maaf, SPP ananda *${item.nama_santri}* untuk bulan *${bulan}* (Rp ${nominal}) belum tercatat lunas. Mohon konfirmasinya. Terima kasih.`;
+                            // 2. FORMAT PESAN WHATSAPP ISLAMI
+                            let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* pada bulan *${bulan}* senilai *Rp ${nominal}* saat ini belum tercatat pada sistem kami.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+                            
                             let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
                             tbody.innerHTML += `<tr>
