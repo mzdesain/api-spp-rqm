@@ -949,44 +949,56 @@ function loadTabelSantri() {
 // ==========================================
 if (document.getElementById("btnCekTunggakan")) {
     document.getElementById("btnCekTunggakan").addEventListener("click", function() {
-        let lokasi = document.getElementById("filterLokasiTunggakan").value;
-        let tahun = document.getElementById("filterTahunTunggakan").value;
-        let bulan = document.getElementById("filterBulanTunggakan").value;
         let tbody = document.getElementById("tabelTunggakan");
         
-        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Mencari data tunggakan...</td></tr>";
-        
-        fetch(`${API_URL}?action=get_tunggakan&lokasi=${lokasi}&bulan=${bulan}&tahun_ajaran=${tahun}`)
-        .then(res => res.json())
-        .then(data => {
-            if(data.status === "success") {
-                tbody.innerHTML = "";
-                if(data.data.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
-                } else {
-                    data.data.forEach(item => {
-                        let nominal = Number(item.nominal).toLocaleString('id-ID');
-                        let noWA = item.nomor_whatsapp.replace(/\D/g, "");
-                        if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
-                        
-                        let pesan = `Assalamu'alaikum. Pemberitahuan dari Admin RQM. Mohon maaf, SPP ananda *${item.nama_santri}* untuk bulan *${bulan}* (Rp ${nominal}) belum tercatat lunas. Mohon konfirmasinya. Terima kasih.`;
-                        let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
+        try {
+            let lokasi = document.getElementById("filterLokasiTunggakan").value;
+            let tahun = document.getElementById("filterTahunTunggakan").value;
+            let bulan = document.getElementById("filterBulanTunggakan").value;
+            
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Mencari data tunggakan...</td></tr>";
+            
+            // 1. URL diamankan (encodeURIComponent) agar garis miring di "2025/2026" tidak merusak link
+            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}`;
+            
+            fetch(urlAman)
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    tbody.innerHTML = "";
+                    if(data.data.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
+                    } else {
+                        data.data.forEach(item => {
+                            let nominal = Number(item.nominal).toLocaleString('id-ID');
+                            
+                            // 2. Mencegah error jika nomor WA dari Google Sheets terbaca sebagai Angka (Number)
+                            let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
+                            let noWA = waMentah.replace(/\D/g, "");
+                            if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
+                            
+                            let pesan = `Assalamu'alaikum. Pemberitahuan dari Admin RQM. Mohon maaf, SPP ananda *${item.nama_santri}* untuk bulan *${bulan}* (Rp ${nominal}) belum tercatat lunas. Mohon konfirmasinya. Terima kasih.`;
+                            let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
-                        tbody.innerHTML += `<tr>
-                            <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
-                            <td>${item.lokasi}</td><td>Rp ${nominal}</td>
-                            <td style="text-align: center;">${linkWA}</td>
-                        </tr>`;
-                    });
+                            tbody.innerHTML += `<tr>
+                                <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
+                                <td>${item.lokasi}</td><td>Rp ${nominal}</td>
+                                <td style="text-align: center;">${linkWA}</td>
+                            </tr>`;
+                        });
+                    }
+                } else {
+                    tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal: ${data.message}</td></tr>`;
                 }
-            } else {
-                // PESAN ERROR JIKA APPS SCRIPT BELUM DI-DEPLOY VERSI BARU
-                tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal: ${data.message} (Cek kembali URL di config.js)</td></tr>`;
-            }
-        })
-        .catch(error => {
-            // PESAN ERROR JIKA KONEKSI TERPUTUS
-            tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal terhubung ke server. Periksa URL API atau internet Anda.</td></tr>`;
-        });
+            })
+            .catch(error => {
+                tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal terhubung ke server. Pastikan URL di config.js benar.</td></tr>`;
+                console.error("Fetch Error:", error);
+            });
+            
+        } catch (errLokal) {
+            tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Error Sistem: ${errLokal.message}</td></tr>`;
+            console.error("Error Lokal:", errLokal);
+        }
     });
 }
