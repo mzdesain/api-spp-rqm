@@ -987,7 +987,7 @@ if (document.getElementById("btnCekTunggakan")) {
                 if(data.status === "success") {
                     tbody.innerHTML = "";
                     if(data.data.length === 0) {
-                        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
+                        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk bulan ini.</td></tr>";
                     } else {
                         data.data.forEach(item => {
                             let nominal = Number(item.nominal).toLocaleString('id-ID');
