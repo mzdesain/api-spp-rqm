@@ -956,44 +956,37 @@ if (document.getElementById("btnCekTunggakan")) {
         
         tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Mencari data tunggakan...</td></tr>";
         
-        // Wajib di-encode agar spasi dan garis miring (/) pada tahun ajaran tidak merusak URL API
-        let urlAPI = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}`;
-        
-        fetch(urlAPI)
+        fetch(`${API_URL}?action=get_tunggakan&lokasi=${lokasi}&bulan=${bulan}&tahun_ajaran=${tahun}`)
         .then(res => res.json())
         .then(data => {
             if(data.status === "success") {
                 tbody.innerHTML = "";
                 if(data.data.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight: 600;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
+                    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
                 } else {
                     data.data.forEach(item => {
                         let nominal = Number(item.nominal).toLocaleString('id-ID');
-                        
-                        // Format WA: Ubah 08 menjadi 628
                         let noWA = item.nomor_whatsapp.replace(/\D/g, "");
                         if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
                         
-                        // Pesan WA Otomatis
                         let pesan = `Assalamu'alaikum. Pemberitahuan dari Admin RQM. Mohon maaf, SPP ananda *${item.nama_santri}* untuk bulan *${bulan}* (Rp ${nominal}) belum tercatat lunas. Mohon konfirmasinya. Terima kasih.`;
-                        let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #107c41; color: white; padding: 6px 12px; text-decoration: none; border-radius: 2px; font-size: 12px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px; font-weight:600;">WA Kosong</span>`;
+                        let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
                         tbody.innerHTML += `<tr>
-                            <td style="border: 1px solid #d2d2d2; padding: 10px;">${item.nomor_registrasi}</td>
-                            <td style="border: 1px solid #d2d2d2; padding: 10px;">${item.nama_santri}</td>
-                            <td style="border: 1px solid #d2d2d2; padding: 10px;">${item.lokasi}</td>
-                            <td style="border: 1px solid #d2d2d2; padding: 10px; color:#c00000; font-weight:600;">Rp ${nominal}</td>
-                            <td style="border: 1px solid #d2d2d2; padding: 10px; text-align: center;">${linkWA}</td>
+                            <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
+                            <td>${item.lokasi}</td><td>Rp ${nominal}</td>
+                            <td style="text-align: center;">${linkWA}</td>
                         </tr>`;
                     });
                 }
             } else {
-                tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Terjadi kesalahan di server: ${data.message}</td></tr>`;
+                // PESAN ERROR JIKA APPS SCRIPT BELUM DI-DEPLOY VERSI BARU
+                tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal: ${data.message} (Cek kembali URL di config.js)</td></tr>`;
             }
         })
-        .catch(err => {
-            console.error("Error Fetch:", err);
-            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#c00000; font-weight: 600;'>Koneksi terputus! Pastikan sudah Deploy 'Versi Baru' di Apps Script dan URL di config.js sudah yang terbaru.</td></tr>";
+        .catch(error => {
+            // PESAN ERROR JIKA KONEKSI TERPUTUS
+            tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal terhubung ke server. Periksa URL API atau internet Anda.</td></tr>`;
         });
     });
 }
