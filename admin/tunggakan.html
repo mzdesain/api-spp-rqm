@@ -68,34 +68,31 @@
                         <button id="btnCekTunggakan" class="btn-primary" style="background-color: #c00000;">Cek Tunggakan</button>
                     </div>
 
-                    <table style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th>No. Reg</th>
-                                <th>Nama Santri</th>
-                                <th>Lokasi</th>
-                                <th>SPP Tertunggak</th>
-                                <th>Aksi (WhatsApp)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelTunggakan">
-                            <tr><td colspan="5" style="text-align: center;">Pilih filter dan klik Cek Tunggakan.</td></tr>
-                        </tbody>
-                        <tbody id="tabelTunggakan">
-                            <tr><td colspan="5" style="text-align: center;">Pilih filter dan klik Cek Tunggakan.</td></tr>
-                        </tbody>
-                        
-                        <!-- TAMBAHKAN KODE TFOOT INI DI BAWAH TBODY -->
-                        <tfoot id="rekapTunggakan" style="display: none;">
-                            <tr>
-                                <th colspan="3" style="text-align: right; padding: 15px; border: 1px solid #d2d2d2; background-color: #f3f2f1; color: #323130; font-weight: 700;">
-                                    TOTAL MENUNGGAK: <span id="jmlSantriNunggak" style="color: #c00000; margin-right: 25px; font-size: 16px;">0 Santri</span> 
-                                    ESTIMASI TOTAL NOMINAL:
-                                </th>
-                                <th colspan="2" id="totalNominalNunggak" style="text-align: left; padding: 15px; border: 1px solid #d2d2d2; background-color: #fff4ce; color: #c00000; font-weight: 700; font-size: 16px;">Rp 0</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">No. Reg</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Nama Santri</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Lokasi</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">SPP Tertunggak</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Aksi (WhatsApp)</th>
+        </tr>
+    </thead>
+    <tbody id="tabelTunggakan">
+        <tr>
+            <td colspan="5" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #605e5c;">Pilih filter dan klik Cek Tunggakan.</td>
+        </tr>
+    </tbody>
+    <tfoot id="rekapTunggakan" style="display: none;">
+        <tr>
+            <th colspan="3" style="text-align: right; padding: 15px; border: 1px solid #d2d2d2; background-color: #f3f2f1; color: #323130; font-weight: 700; text-transform: uppercase;">
+                TOTAL MENUNGGAK: <span id="jmlSantriNunggak" style="color: #c00000; margin-right: 25px; font-size: 16px;">0 SANTRI</span> 
+                ESTIMASI TOTAL NOMINAL:
+            </th>
+            <th colspan="2" id="totalNominalNunggak" style="text-align: left; padding: 15px; border: 1px solid #d2d2d2; background-color: #fff4ce; color: #c00000; font-weight: 700; font-size: 16px;">RP 0</th>
+        </tr>
+    </tfoot>
+</table>
                     </table>
                 </div>
             </div>

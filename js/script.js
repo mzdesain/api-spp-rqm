@@ -959,8 +959,8 @@ if (document.getElementById("btnCekTunggakan")) {
             let tahun = document.getElementById("filterTahunTunggakan").value;
             let bulan = document.getElementById("filterBulanTunggakan").value;
             
-            if(tfoot) tfoot.style.display = "none"; // Sembunyikan rekap saat loading
-            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Mencari data tunggakan...</td></tr>";
+            if(tfoot) tfoot.style.display = "none";
+            tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
             
             let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
             
@@ -968,16 +968,16 @@ if (document.getElementById("btnCekTunggakan")) {
             .then(res => res.json())
             .then(data => {
                 if(data.status === "success") {
-                    tbody.innerHTML = "";
+                    tbody.innerHTML = ""; // Menghapus teks pencarian secara bersih
                     let totalNominal = 0;
                     let jmlSantri = data.data.length;
 
                     if(jmlSantri === 0) {
-                        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
+                        tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
                     } else {
                         data.data.forEach(item => {
                             let nominalAngka = Number(item.nominal) || 0;
-                            totalNominal += nominalAngka; // Menjumlahkan total tagihan
+                            totalNominal += nominalAngka; 
                             let nominalStr = nominalAngka.toLocaleString('id-ID');
                             
                             let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
@@ -997,25 +997,22 @@ if (document.getElementById("btnCekTunggakan")) {
                             </tr>`;
                         });
 
-                        // Tampilkan baris rekapitulasi di bawah tabel
                         if(tfoot) {
                             tfoot.style.display = "table-footer-group";
-                            elJml.textContent = `${jmlSantri} Santri`;
-                            elTotal.textContent = `Rp ${totalNominal.toLocaleString('id-ID')}`;
+                            elJml.textContent = `${jmlSantri} SANTRI`;
+                            elTotal.textContent = `RP ${totalNominal.toLocaleString('id-ID')}`;
                         }
                     }
                 } else {
-                    tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal: ${data.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
                 }
             })
             .catch(error => {
-                tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal terhubung ke server. Pastikan URL di config.js benar.</td></tr>`;
-                console.error("Fetch Error:", error);
+                tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal terhubung ke server. Pastikan URL di config.js benar.</td></tr>`;
             });
             
         } catch (errLokal) {
-            tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Error Sistem: ${errLokal.message}</td></tr>`;
-            console.error("Error Lokal:", errLokal);
+            tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error Sistem: ${errLokal.message}</td></tr>`;
         }
     });
 }
