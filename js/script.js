@@ -948,65 +948,61 @@ function loadTabelSantri() {
 // FITUR TUNGGAKAN & WHATSAPP
 // ==========================================
 if (document.getElementById("btnCekTunggakan")) {
-    
-    // 1. SCRIPT OTOMATISASI TAHUN AJARAN DINAMIS
-    const selectTahun = document.getElementById("filterTahunTunggakan");
-    if (selectTahun) {
-        selectTahun.innerHTML = ""; // Hapus bawaan HTML
-        let tahunSekarang = new Date().getFullYear();
-        let bulanSekarang = new Date().getMonth() + 1;
-        // Jika bulan Juli ke atas, berarti sudah masuk tahun ajaran baru
-        let tahunMulai = bulanSekarang >= 7 ? tahunSekarang : tahunSekarang - 1;
-        
-        // Membentuk dropdown dari 1 tahun sebelumnya sampai 2 tahun ke depan
-        for (let i = -1; i <= 2; i++) {
-            let formatTahun = `${tahunMulai + i}/${tahunMulai + i + 1}`;
-            let option = document.createElement("option");
-            option.value = formatTahun;
-            option.textContent = formatTahun;
-            if (i === 0) option.selected = true; // Default selalu tahun berjalan
-            selectTahun.appendChild(option);
-        }
-    }
-
     document.getElementById("btnCekTunggakan").addEventListener("click", function() {
         let tbody = document.getElementById("tabelTunggakan");
+        let tfoot = document.getElementById("rekapTunggakan");
+        let elJml = document.getElementById("jmlSantriNunggak");
+        let elTotal = document.getElementById("totalNominalNunggak");
         
         try {
             let lokasi = document.getElementById("filterLokasiTunggakan").value;
             let tahun = document.getElementById("filterTahunTunggakan").value;
             let bulan = document.getElementById("filterBulanTunggakan").value;
             
+            if(tfoot) tfoot.style.display = "none"; // Sembunyikan rekap saat loading
             tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Mencari data tunggakan...</td></tr>";
             
-            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}`;
+            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
             
             fetch(urlAman)
             .then(res => res.json())
             .then(data => {
                 if(data.status === "success") {
                     tbody.innerHTML = "";
-                    if(data.data.length === 0) {
-                        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk bulan ini.</td></tr>";
+                    let totalNominal = 0;
+                    let jmlSantri = data.data.length;
+
+                    if(jmlSantri === 0) {
+                        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#107c41; font-weight:bold;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
                     } else {
                         data.data.forEach(item => {
-                            let nominal = Number(item.nominal).toLocaleString('id-ID');
+                            let nominalAngka = Number(item.nominal) || 0;
+                            totalNominal += nominalAngka; // Menjumlahkan total tagihan
+                            let nominalStr = nominalAngka.toLocaleString('id-ID');
                             
                             let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
                             let noWA = waMentah.replace(/\D/g, "");
                             if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
                             
-                            // 2. FORMAT PESAN WHATSAPP ISLAMI
-                            let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* pada bulan *${bulan}* senilai *Rp ${nominal}* saat ini belum tercatat pada sistem kami.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+                            let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* pada bulan *${bulan}* senilai *Rp ${nominalStr}* saat ini belum tercatat pada sistem kami.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
                             
                             let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
                             tbody.innerHTML += `<tr>
-                                <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
-                                <td>${item.lokasi}</td><td>Rp ${nominal}</td>
-                                <td style="text-align: center;">${linkWA}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">Rp ${nominalStr}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2; text-align: center;">${linkWA}</td>
                             </tr>`;
                         });
+
+                        // Tampilkan baris rekapitulasi di bawah tabel
+                        if(tfoot) {
+                            tfoot.style.display = "table-footer-group";
+                            elJml.textContent = `${jmlSantri} Santri`;
+                            elTotal.textContent = `Rp ${totalNominal.toLocaleString('id-ID')}`;
+                        }
                     }
                 } else {
                     tbody.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#c00000;'>Gagal: ${data.message}</td></tr>`;
