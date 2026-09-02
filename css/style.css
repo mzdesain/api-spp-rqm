@@ -559,3 +559,83 @@ td {
     border-radius: 10px; /* Membuat sudut kotak putihnya sedikit melengkung */
     box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Memberi efek bayangan lembut */
 }
+
+/* ==========================================
+   RESPONSIVE DESIGN (HP & TABLET)
+   ========================================== */
+@media screen and (max-width: 768px) {
+    /* 1. Susun layout menjadi atas-bawah (Sidebar pindah ke atas) */
+    .admin-layout {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* 2. Sidebar menyesuaikan lebar layar */
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        min-height: auto !important;
+        padding-bottom: 10px !important;
+    }
+
+    /* Susun menu navigasi menjadi 2 kolom di HP */
+    .sidebar-nav {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        padding: 0 10px !important;
+    }
+
+    .sidebar-nav .nav-item {
+        flex: 1 1 45% !important; 
+        text-align: center !important;
+        margin: 5px !important;
+        padding: 10px !important;
+        font-size: 13px !important;
+    }
+
+    /* 3. Konten Utama full width */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 10px !important;
+    }
+
+    /* 4. Tabel dibuat bisa digeser ke samping (Scroll Horizontal) agar tidak terpotong */
+    .content-wrapper > div {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding: 15px !important;
+    }
+    
+    table {
+        min-width: 600px !important; /* Menjaga tabel tetap rapi saat di-scroll */
+    }
+
+    /* 5. Form input dan Filter yang sejajar diubah menjadi menurun (atas-bawah) */
+    div[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+    
+    div[style*="display: flex"] > div {
+        width: 100% !important;
+    }
+
+    /* Tombol menjadi lebar penuh di HP */
+    button {
+        width: 100% !important;
+        margin-top: 5px !important;
+        padding: 10px !important;
+    }
+
+    /* 6. Pop-up Custom Modal agar pas di layar HP */
+    div[style*="width: 350px"], div[style*="width: 300px"] {
+        width: 90% !important;
+        padding: 20px !important;
+    }
+}
