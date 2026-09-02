@@ -959,24 +959,137 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // ==========================================
-// FITUR HAPUS ADMIN & SANTRI
+// FITUR HAPUS ADMIN & SANTRI (CUSTOM POP-UP)
 // ==========================================
+
 window.hapusAdmin = function(username) {
-    if(confirm("Yakin ingin menghapus admin " + username + "?")) {
+    let modalOverlay = document.createElement("div");
+    modalOverlay.style.position = "fixed";
+    modalOverlay.style.top = "0";
+    modalOverlay.style.left = "0";
+    modalOverlay.style.width = "100%";
+    modalOverlay.style.height = "100%";
+    modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+    modalOverlay.style.display = "flex";
+    modalOverlay.style.justifyContent = "center";
+    modalOverlay.style.alignItems = "center";
+    modalOverlay.style.zIndex = "9999";
+
+    let modalBox = document.createElement("div");
+    modalBox.style.backgroundColor = "#fff";
+    modalBox.style.width = "350px";
+    modalBox.style.border = "1px solid #d2d2d2";
+    modalBox.style.borderTop = "4px solid #c00000"; // Garis merah
+    modalBox.style.borderRadius = "2px";
+    modalBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    modalBox.style.padding = "25px";
+    modalBox.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    
+    modalBox.innerHTML = `
+        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px; font-weight: 600; color: #323130;">Konfirmasi Hapus</h3>
+        <p style="margin-bottom: 25px; font-size: 14px; color: #605e5c;">Apakah Anda yakin ingin menghapus admin <strong>"${username}"</strong>?</p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button id="btnBatalHapusAdmin" style="background-color: #fff; color: #323130; border: 1px solid #8a8886; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none;">Batal</button>
+            <button id="btnYaHapusAdmin" style="background-color: #c00000; color: #fff; border: 1px solid #c00000; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none;">Ya, Hapus</button>
+        </div>
+    `;
+    
+    modalOverlay.appendChild(modalBox);
+    document.body.appendChild(modalOverlay);
+
+    document.getElementById("btnBatalHapusAdmin").addEventListener("click", function() {
+        document.body.removeChild(modalOverlay);
+    });
+
+    document.getElementById("btnYaHapusAdmin").addEventListener("click", function() {
+        let btnYa = document.getElementById("btnYaHapusAdmin");
+        btnYa.textContent = "Menghapus...";
+        btnYa.disabled = true;
+
         fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "hapus_admin", username: username }) })
         .then(res => res.json()).then(data => {
-            alert(data.message); if(data.status === "success") loadDataAdmin();
-        }).catch(err => alert("Error koneksi"));
-    }
+            document.body.removeChild(modalOverlay);
+            let warnaTema = data.status === "success" ? "#107c41" : "#c00000";
+            if (typeof tampilkanPesanCustom === "function") {
+                tampilkanPesanCustom(data.message, warnaTema);
+            } else {
+                alert(data.message);
+            }
+            if(data.status === "success") loadDataAdmin();
+        }).catch(err => {
+            document.body.removeChild(modalOverlay);
+            if (typeof tampilkanPesanCustom === "function") {
+                tampilkanPesanCustom("Error koneksi saat menghapus admin", "#c00000");
+            } else {
+                alert("Error koneksi");
+            }
+        });
+    });
 }
 
 window.hapusSantri = function(noReg) {
-    if(confirm("Yakin ingin menghapus data santri dengan No. Reg " + noReg + "?")) {
+    let modalOverlay = document.createElement("div");
+    modalOverlay.style.position = "fixed";
+    modalOverlay.style.top = "0";
+    modalOverlay.style.left = "0";
+    modalOverlay.style.width = "100%";
+    modalOverlay.style.height = "100%";
+    modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+    modalOverlay.style.display = "flex";
+    modalOverlay.style.justifyContent = "center";
+    modalOverlay.style.alignItems = "center";
+    modalOverlay.style.zIndex = "9999";
+
+    let modalBox = document.createElement("div");
+    modalBox.style.backgroundColor = "#fff";
+    modalBox.style.width = "350px";
+    modalBox.style.border = "1px solid #d2d2d2";
+    modalBox.style.borderTop = "4px solid #c00000";
+    modalBox.style.borderRadius = "2px";
+    modalBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    modalBox.style.padding = "25px";
+    modalBox.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    
+    modalBox.innerHTML = `
+        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px; font-weight: 600; color: #323130;">Konfirmasi Hapus</h3>
+        <p style="margin-bottom: 25px; font-size: 14px; color: #605e5c;">Yakin ingin menghapus data santri dengan No. Reg <strong>"${noReg}"</strong>?</p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button id="btnBatalHapusSantri" style="background-color: #fff; color: #323130; border: 1px solid #8a8886; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none;">Batal</button>
+            <button id="btnYaHapusSantri" style="background-color: #c00000; color: #fff; border: 1px solid #c00000; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none;">Ya, Hapus</button>
+        </div>
+    `;
+    
+    modalOverlay.appendChild(modalBox);
+    document.body.appendChild(modalOverlay);
+
+    document.getElementById("btnBatalHapusSantri").addEventListener("click", function() {
+        document.body.removeChild(modalOverlay);
+    });
+
+    document.getElementById("btnYaHapusSantri").addEventListener("click", function() {
+        let btnYa = document.getElementById("btnYaHapusSantri");
+        btnYa.textContent = "Menghapus...";
+        btnYa.disabled = true;
+
         fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "hapus_santri", nomor_registrasi: noReg }) })
         .then(res => res.json()).then(data => {
-            alert(data.message); if(data.status === "success") loadTabelSantri();
-        }).catch(err => alert("Error koneksi"));
-    }
+            document.body.removeChild(modalOverlay);
+            let warnaTema = data.status === "success" ? "#107c41" : "#c00000";
+            if (typeof tampilkanPesanCustom === "function") {
+                tampilkanPesanCustom(data.message, warnaTema);
+            } else {
+                alert(data.message);
+            }
+            if(data.status === "success") loadTabelSantri();
+        }).catch(err => {
+            document.body.removeChild(modalOverlay);
+            if (typeof tampilkanPesanCustom === "function") {
+                tampilkanPesanCustom("Error koneksi saat menghapus santri", "#c00000");
+            } else {
+                alert("Error koneksi");
+            }
+        });
+    });
 }
 
 // ==========================================
