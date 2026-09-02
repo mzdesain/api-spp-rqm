@@ -1130,3 +1130,109 @@ if (document.getElementById("btnCetakTunggakan")) {
         }, 1000);
     });
 }
+
+// ==========================================
+// FITUR KELOLA LOKASI RQM
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.getElementById("tabelDataLokasi")) {
+        loadDataLokasi();
+    }
+
+    const formTambahLokasi = document.getElementById("formTambahLokasi");
+    if (formTambahLokasi) {
+        formTambahLokasi.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById("btnSimpanLokasi");
+            const pesan = document.getElementById("pesanLokasi");
+            const namaLokasiVal = document.getElementById("namaLokasi").value.trim();
+
+            btn.textContent = "Menyimpan...";
+            btn.disabled = true;
+
+            fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "tambah_lokasi",
+                    nama_lokasi: namaLokasiVal
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                pesan.style.display = "block";
+                if (data.status === "success") {
+                    pesan.style.backgroundColor = "#e6f2eb";
+                    pesan.style.color = "#107c41";
+                    pesan.style.border = "1px solid #107c41";
+                    pesan.textContent = data.message;
+                    formTambahLokasi.reset();
+                    loadDataLokasi();
+                } else {
+                    pesan.style.backgroundColor = "#fde7e7";
+                    pesan.style.color = "#c00000";
+                    pesan.style.border = "1px solid #c00000";
+                    pesan.textContent = "Gagal: " + data.message;
+                }
+                btn.textContent = "Simpan Lokasi";
+                btn.disabled = false;
+            })
+            .catch(err => {
+                pesan.style.display = "block";
+                pesan.style.backgroundColor = "#fde7e7";
+                pesan.style.color = "#c00000";
+                pesan.textContent = "Gagal terhubung ke server.";
+                btn.textContent = "Simpan Lokasi";
+                btn.disabled = false;
+            });
+        });
+    }
+});
+
+function loadDataLokasi() {
+    const tbody = document.getElementById("tabelDataLokasi");
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; border: 1px solid #d2d2d2; color: #605e5c;">Memuat data lokasi...</td></tr>';
+
+    fetch(`${API_URL}?action=get_lokasi&_nocache=${new Date().getTime()}`)
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            tbody.innerHTML = "";
+            if (data.data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; border: 1px solid #d2d2d2; color: #605e5c;">Belum ada data lokasi.</td></tr>';
+            } else {
+                data.data.forEach((item, index) => {
+                    let tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td style="border: 1px solid #d2d2d2; padding: 8px 10px; text-align: center;">${index + 1}</td>
+                        <td style="border: 1px solid #d2d2d2; padding: 8px 10px; font-weight: 500;">${item.nama_lokasi}</td>
+                        <td style="border: 1px solid #d2d2d2; padding: 8px 10px; text-align: center;">
+                            <button onclick="hapusLokasi('${item.nama_lokasi}')" style="background-color: #c00000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 12px;">Hapus</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+    })
+    .catch(err => {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; border: 1px solid #d2d2d2; color: #c00000;">Gagal memuat data lokasi.</td></tr>';
+    });
+}
+
+window.hapusLokasi = function(namaLokasi) {
+    if (confirm(`Yakin ingin menghapus lokasi "${namaLokasi}"?`)) {
+        fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "hapus_lokasi", nama_lokasi: namaLokasi })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if (data.status === "success") loadDataLokasi();
+        })
+        .catch(err => alert("Error koneksi saat menghapus lokasi"));
+    }
+};

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kelola Lokasi - Admin RQM</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/logo.png" alt="Logo" class="sidebar-logo">
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">Dashboard</a>
+                <a href="santri.html" class="nav-item">Data Santri</a>
+                <a href="pembayaran.html" class="nav-item">Input Pembayaran</a>
+                <a href="tunggakan.html" class="nav-item">Tunggakan SPP</a>
+                <a href="keuangan.html" class="nav-item">Pemasukan & Pengeluaran</a>
+                <a href="laporan.html" class="nav-item">Laporan & Cetak</a>
+                <a href="data_admin.html" class="nav-item">Data Admin</a>
+                <a href="lokasi.html" class="nav-item active">Kelola Lokasi</a>
+            </nav>
+            <div class="sidebar-footer"><a href="../index.html" class="nav-item text-danger">Keluar</a></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1 class="page-title">Kelola Lokasi RQM</h1>
+                <div class="user-info">Selamat bekerja, <strong>Admin</strong></div>
+            </header>
+
+            <div class="content-wrapper" style="padding: 20px;">
+                <!-- Form Tambah Lokasi -->
+                <div style="background: #fff; padding: 20px; border-top: 4px solid #107c41; border-radius: 2px; border: 1px solid #d2d2d2; margin-bottom: 20px; max-width: 500px;">
+                    <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px; color: #323130;">Tambah Lokasi Baru</h3>
+                    <div id="pesanLokasi" style="display: none; padding: 10px; margin-bottom: 15px; border-radius: 2px; font-size: 13px;"></div>
+                    <form id="formTambahLokasi">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600;">Nama Lokasi</label>
+                            <input type="text" id="namaLokasi" placeholder="Contoh: RQM 4" required class="form-control" style="width: 100%; padding: 8px; border: 1px solid #d2d2d2; border-radius: 2px; box-sizing: border-box;">
+                        </div>
+                        <button type="submit" id="btnSimpanLokasi" class="btn-primary" style="background-color: #107c41; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 2px; font-weight: 600;">Simpan Lokasi</button>
+                    </form>
+                </div>
+
+                <!-- Tabel Daftar Lokasi -->
+                <div style="background: #fff; padding: 20px; border-top: 4px solid #323130; border-radius: 2px; border: 1px solid #d2d2d2; max-width: 600px;">
+                    <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px; color: #323130;">Daftar Cabang / Lokasi RQM</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px; font-size: 13px; width: 60px; text-align: center;">No</th>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px; font-size: 13px; text-align: left;">Nama Lokasi</th>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px; font-size: 13px; width: 100px; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelDataLokasi">
+                            <tr><td colspan="3" style="text-align: center; padding: 15px; border: 1px solid #d2d2d2;">Memuat data lokasi...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>
