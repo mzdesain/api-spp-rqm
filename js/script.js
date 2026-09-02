@@ -1176,7 +1176,7 @@ if (document.getElementById("btnCekTunggakan")) {
                     let jmlSantri = data.data.length;
 
                     if(jmlSantri === 0) {
-                        tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada tunggakan untuk filter ini.</td></tr>";
+                        tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada tunggakan di bulan ini.</td></tr>";
                     } else {
                         data.data.forEach(item => {
                             let nominalAngka = Number(item.nominal) || 0;
