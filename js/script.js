@@ -1,4 +1,65 @@
-// js/script.js
+// js/script.
+
+// ==========================================
+// SINKRONISASI DROPDOWN LOKASI OTOMATIS (GLOBAL)
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    // Daftar ID elemen dropdown lokasi di semua halaman HTML kamu
+    const dropdownLokasi = [
+        { id: "filterLokasi", jenis: "filter" },           // Di Dashboard
+        { id: "filterLokasiTunggakan", jenis: "filter" },  // Di Tunggakan
+        { id: "filterLokasiLaporan", jenis: "filter" },    // Di Laporan
+        { id: "lokasiRQM", jenis: "input" },               // Di Tambah Santri
+        { id: "lokasiPemasukan", jenis: "input" },         // Di Pemasukan
+        { id: "lokasiPengeluaran", jenis: "input" }        // Di Pengeluaran
+    ];
+
+    // Cek apakah halaman yang sedang dibuka memiliki minimal satu dropdown lokasi
+    let adaDropdownLokasi = dropdownLokasi.some(item => document.getElementById(item.id));
+    
+    if (adaDropdownLokasi) {
+        fetch(`${API_URL}?action=get_lokasi&_nocache=${new Date().getTime()}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                let daftarLokasi = data.data; // Array dari database
+                
+                dropdownLokasi.forEach(item => {
+                    let selectEl = document.getElementById(item.id);
+                    if (selectEl) {
+                        selectEl.innerHTML = ""; // Bersihkan opsi manual bawaan HTML
+                        
+                        // Jika dropdown ini untuk Filter (Tunggakan/Laporan/Dashboard)
+                        if (item.jenis === "filter") {
+                            let optSemua = document.createElement("option");
+                            optSemua.value = "Semua";
+                            optSemua.textContent = "Semua Lokasi";
+                            selectEl.appendChild(optSemua);
+                        } 
+                        // Jika dropdown ini untuk Input (Santri Baru/Keuangan)
+                        else {
+                            let optKosong = document.createElement("option");
+                            optKosong.value = "";
+                            optKosong.textContent = "-- Pilih Lokasi --";
+                            optKosong.disabled = true;
+                            optKosong.selected = true;
+                            selectEl.appendChild(optKosong);
+                        }
+
+                        // Suntikkan lokasi dari database (termasuk RQM 4 yang baru ditambah)
+                        daftarLokasi.forEach(loc => {
+                            let opt = document.createElement("option");
+                            opt.value = loc.nama_lokasi;
+                            opt.textContent = loc.nama_lokasi;
+                            selectEl.appendChild(opt);
+                        });
+                    }
+                });
+            }
+        })
+        .catch(err => console.error("Gagal sinkronisasi data lokasi:", err));
+    }
+});
 
 document.addEventListener("DOMContentLoaded", function() {
     const formOrtu = document.getElementById("formOrtu");
