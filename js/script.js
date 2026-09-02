@@ -1283,17 +1283,108 @@ function loadDataLokasi() {
     });
 }
 
+// Fungsi untuk memunculkan pesan pemberitahuan kustom (Pengganti alert bawaan browser)
+window.tampilkanPesanCustom = function(pesan, warnaTema) {
+    let alertOverlay = document.createElement("div");
+    alertOverlay.style.position = "fixed";
+    alertOverlay.style.top = "0";
+    alertOverlay.style.left = "0";
+    alertOverlay.style.width = "100%";
+    alertOverlay.style.height = "100%";
+    alertOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+    alertOverlay.style.display = "flex";
+    alertOverlay.style.justifyContent = "center";
+    alertOverlay.style.alignItems = "center";
+    alertOverlay.style.zIndex = "9999";
+
+    let alertBox = document.createElement("div");
+    alertBox.style.backgroundColor = "#fff";
+    alertBox.style.width = "300px";
+    alertBox.style.border = "1px solid #d2d2d2";
+    alertBox.style.borderTop = `4px solid ${warnaTema}`;
+    alertBox.style.borderRadius = "2px";
+    alertBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    alertBox.style.padding = "25px";
+    alertBox.style.textAlign = "center";
+    alertBox.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    
+    alertBox.innerHTML = `
+        <p style="margin-top: 0; margin-bottom: 20px; font-size: 14px; color: #323130; font-weight: 500;">${pesan}</p>
+        <button id="btnTutupAlert" style="background-color: ${warnaTema}; color: #fff; border: none; padding: 8px 20px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none;">Tutup</button>
+    `;
+    
+    alertOverlay.appendChild(alertBox);
+    document.body.appendChild(alertOverlay);
+
+    document.getElementById("btnTutupAlert").addEventListener("click", function() {
+        document.body.removeChild(alertOverlay);
+    });
+};
+
+// Fungsi kustom hapus lokasi (Pengganti confirm bawaan browser)
 window.hapusLokasi = function(namaLokasi) {
-    if (confirm(`Yakin ingin menghapus lokasi "${namaLokasi}"?`)) {
+    let modalOverlay = document.createElement("div");
+    modalOverlay.style.position = "fixed";
+    modalOverlay.style.top = "0";
+    modalOverlay.style.left = "0";
+    modalOverlay.style.width = "100%";
+    modalOverlay.style.height = "100%";
+    modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+    modalOverlay.style.display = "flex";
+    modalOverlay.style.justifyContent = "center";
+    modalOverlay.style.alignItems = "center";
+    modalOverlay.style.zIndex = "9999";
+
+    let modalBox = document.createElement("div");
+    modalBox.style.backgroundColor = "#fff";
+    modalBox.style.width = "350px";
+    modalBox.style.border = "1px solid #d2d2d2";
+    modalBox.style.borderTop = "4px solid #c00000"; // Garis merah
+    modalBox.style.borderRadius = "2px";
+    modalBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    modalBox.style.padding = "25px";
+    modalBox.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    
+    modalBox.innerHTML = `
+        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px; font-weight: 600; color: #323130;">Konfirmasi Hapus</h3>
+        <p style="margin-bottom: 25px; font-size: 14px; color: #605e5c;">Apakah Anda yakin ingin menghapus lokasi <strong>"${namaLokasi}"</strong>?</p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button id="btnBatalHapus" style="background-color: #fff; color: #323130; border: 1px solid #8a8886; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none;">Batal</button>
+            <button id="btnYaHapus" style="background-color: #c00000; color: #fff; border: 1px solid #c00000; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none;">Ya, Hapus</button>
+        </div>
+    `;
+    
+    modalOverlay.appendChild(modalBox);
+    document.body.appendChild(modalOverlay);
+
+    // Aksi saat klik Batal
+    document.getElementById("btnBatalHapus").addEventListener("click", function() {
+        document.body.removeChild(modalOverlay);
+    });
+
+    // Aksi saat klik Ya, Hapus
+    document.getElementById("btnYaHapus").addEventListener("click", function() {
+        let btnYa = document.getElementById("btnYaHapus");
+        btnYa.textContent = "Menghapus...";
+        btnYa.disabled = true;
+
         fetch(API_URL, {
             method: "POST",
             body: JSON.stringify({ action: "hapus_lokasi", nama_lokasi: namaLokasi })
         })
         .then(res => res.json())
         .then(data => {
-            alert(data.message);
-            if (data.status === "success") loadDataLokasi();
+            document.body.removeChild(modalOverlay); // Tutup pop-up konfirmasi
+            
+            // Tampilkan pop-up hasil (Sukses = Hijau, Gagal = Merah)
+            let warnaTema = data.status === "success" ? "#107c41" : "#c00000";
+            tampilkanPesanCustom(data.message, warnaTema);
+            
+            if (data.status === "success") loadDataLokasi(); // Refresh tabel
         })
-        .catch(err => alert("Error koneksi saat menghapus lokasi"));
-    }
+        .catch(err => {
+            document.body.removeChild(modalOverlay);
+            tampilkanPesanCustom("Error koneksi saat menghapus lokasi.", "#c00000");
+        });
+    });
 };
