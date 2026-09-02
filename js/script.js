@@ -945,6 +945,30 @@ function loadTabelSantri() {
 }
 
 // ==========================================
+// OTOMATISASI DROPDOWN TAHUN AJARAN TUNGGAKAN
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    let selectTahun = document.getElementById("filterTahunTunggakan");
+    if (selectTahun) {
+        selectTahun.innerHTML = ""; // Bersihkan opsi manual di HTML
+        let thnSekarang = new Date().getFullYear();
+        let blnSekarang = new Date().getMonth() + 1;
+        // Jika sudah masuk Juli, berarti masuk tahun ajaran baru
+        let thnMulai = (blnSekarang >= 7) ? thnSekarang : thnSekarang - 1;
+
+        // Buat rentang tahun (1 tahun lalu sampai 2 tahun ke depan)
+        for (let i = -1; i <= 2; i++) {
+            let teksTahun = `${thnMulai + i}/${thnMulai + i + 1}`;
+            let opt = document.createElement("option");
+            opt.value = teksTahun;
+            opt.textContent = teksTahun;
+            if (i === 0) opt.selected = true; // Otomatis pilih tahun berjalan
+            selectTahun.appendChild(opt);
+        }
+    }
+});
+
+// ==========================================
 // FITUR TUNGGAKAN & WHATSAPP
 // ==========================================
 if (document.getElementById("btnCekTunggakan")) {
@@ -953,6 +977,7 @@ if (document.getElementById("btnCekTunggakan")) {
         let tfoot = document.getElementById("rekapTunggakan");
         let elJml = document.getElementById("jmlSantriNunggak");
         let elTotal = document.getElementById("totalNominalNunggak");
+        let btnCetak = document.getElementById("btnCetakTunggakan"); // Variabel untuk tombol cetak
         
         try {
             let lokasi = document.getElementById("filterLokasiTunggakan").value;
@@ -960,6 +985,8 @@ if (document.getElementById("btnCekTunggakan")) {
             let bulan = document.getElementById("filterBulanTunggakan").value;
             
             if(tfoot) tfoot.style.display = "none";
+            if(btnCetak) btnCetak.style.display = "none"; // Sembunyikan tombol saat mulai mencari
+            
             tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
             
             let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
@@ -968,6 +995,8 @@ if (document.getElementById("btnCekTunggakan")) {
             .then(res => res.json())
             .then(data => {
                 if(data.status === "success") {
+                    if(btnCetak) btnCetak.style.display = "inline-block"; // MUNCULKAN TOMBOL CETAK DI SINI
+                    
                     tbody.innerHTML = ""; // Menghapus teks pencarian secara bersih
                     let totalNominal = 0;
                     let jmlSantri = data.data.length;
@@ -1014,5 +1043,90 @@ if (document.getElementById("btnCekTunggakan")) {
         } catch (errLokal) {
             tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error Sistem: ${errLokal.message}</td></tr>`;
         }
+    });
+}
+
+// ==========================================
+// FITUR CETAK / PDF DATA TUNGGAKAN
+// ==========================================
+if (document.getElementById("btnCetakTunggakan")) {
+    document.getElementById("btnCetakTunggakan").addEventListener("click", function(e) {
+        e.preventDefault();
+
+        // 1. Ambil data teks filter
+        let elLokasi = document.getElementById("filterLokasiTunggakan");
+        let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
+        let txtTahun = document.getElementById("filterTahunTunggakan").value;
+        let elBulan = document.getElementById("filterBulanTunggakan");
+        let txtBulan = elBulan.options[elBulan.selectedIndex].text;
+
+        let tableContainer = document.querySelector(".content-wrapper > div");
+
+        // 2. Buat Kop Surat
+        let printHeader = document.createElement("div");
+        printHeader.id = "printHeaderTunggakan";
+        printHeader.style.display = "none";
+        printHeader.innerHTML = `
+            <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
+                <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
+                <div style="flex: 1; text-align: center;">
+                    <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Laporan Tunggakan SPP</h1>
+                    <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
+                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Tahun Ajaran: ${txtTahun} | Bulan: ${txtBulan}</p>
+                </div>
+                <div style="width: 80px;"></div>
+            </div>
+        `;
+
+        // 3. Buat Tanda Tangan Bawah
+        const namaBulanArr = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        let now = new Date();
+        let tglCetak = now.getDate() + " " + namaBulanArr[now.getMonth()] + " " + now.getFullYear();
+
+        let printFooter = document.createElement("div");
+        printFooter.id = "printFooterTunggakan";
+        printFooter.style.display = "none";
+        printFooter.innerHTML = `
+            <div style="margin-top: 50px; display: flex; justify-content: flex-end; color: #000;">
+                <div style="text-align: center; width: 250px;">
+                    <p style="margin: 0 0 70px 0; font-size: 14px;">......................., ${tglCetak}<br>Bendahara,</p>
+                    <p style="margin: 0; font-size: 14px; font-weight: bold; text-decoration: underline;">( .................................... )</p>
+                </div>
+            </div>
+        `;
+
+        tableContainer.insertBefore(printHeader, tableContainer.firstChild);
+        tableContainer.appendChild(printFooter);
+
+        // 4. Modifikasi Tabel Sementara (Hilangkan Kolom WA agar PDF rapi)
+        let tfootTh1 = document.querySelector("#rekapTunggakan th:nth-child(1)");
+        if (tfootTh1) tfootTh1.setAttribute("colspan", "2"); 
+
+        let printStyle = document.createElement('style');
+        printStyle.innerHTML = `
+            @media print {
+                body { background-color: white !important; margin: 0; padding: 0; }
+                .sidebar, .topbar, .user-info { display: none !important; }
+                .content-wrapper > div > div:first-child { display: none !important; } /* Sembunyikan Filter */
+                table th:last-child, table td:last-child { display: none !important; } /* Sembunyikan Kolom WA */
+                .main-content { margin-left: 0 !important; }
+                .content-wrapper { padding: 0 !important; }
+                .content-wrapper > div { border: none !important; padding: 0 !important; box-shadow: none !important; }
+                #printHeaderTunggakan, #printFooterTunggakan { display: block !important; }
+                table th, table td { color: #000 !important; }
+                #rekapTunggakan { display: table-footer-group !important; }
+            }
+        `;
+        document.head.appendChild(printStyle);
+
+        window.print();
+
+        // 5. Kembalikan bentuk tabel seperti semula setelah cetak
+        setTimeout(() => {
+            document.head.removeChild(printStyle);
+            tableContainer.removeChild(printHeader);
+            tableContainer.removeChild(printFooter);
+            if (tfootTh1) tfootTh1.setAttribute("colspan", "3");
+        }, 1000);
     });
 }
