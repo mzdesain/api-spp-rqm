@@ -506,7 +506,7 @@ if (document.getElementById("btnTampilkanLaporan")) {
                     let totalPengeluaran = 0;
 
                     if (data.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #c00000;">Tidak ada data transaksi untuk filter tersebut.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="5" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #c00000;">Tidak ada data transaksi untuk bulan ini.</td></tr>';
                     } else {
                         data.data.forEach(item => {
                             totalPemasukan += item.pemasukan;
