@@ -1192,15 +1192,13 @@ if (document.getElementById("btnCekTunggakan")) {
         try {
             let lokasi = document.getElementById("filterLokasiTunggakan").value;
             let tahun = document.getElementById("filterTahunTunggakan").value;
-            let bulan = document.getElementById("filterBulanTunggakan").value;
             
             if(tfoot) tfoot.style.display = "none";
-            if(btnCetak) btnCetak.style.display = "none"; // Sembunyikan tombol saat mulai mencari
+            if(btnCetak) btnCetak.style.display = "none";
             
-            tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
             
-            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
-            
+let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;            
             fetch(urlAman)
             .then(res => res.json())
             .then(data => {
