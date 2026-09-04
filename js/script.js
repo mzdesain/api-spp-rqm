@@ -1108,10 +1108,18 @@ function loadTabelSantri() {
             tbody.innerHTML = "";
             data.data.forEach(item => {
                 let nominal = Number(item.nominal).toLocaleString('id-ID');
+                let statusSantri = item.status || 'Aktif'; // Fallback jika kosong = Aktif
+                
                 tbody.innerHTML += `<tr>
-                    <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
-                    <td>${item.lokasi}</td><td>Rp ${nominal}</td><td>${item.nomor_whatsapp}</td>
-                    <td style="text-align: center;"><button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">Hapus</button></td>
+                    <td>${item.nomor_registrasi}</td>
+                    <td>${item.nama_santri}</td>
+                    <td>${item.lokasi}</td>
+                    <td>Rp ${nominal}</td>
+                    <td>${item.nomor_whatsapp}</td>
+                    <td style="text-align: center;">
+                        <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
+                        <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
+                    </td>
                 </tr>`;
             });
         }
@@ -1154,16 +1162,18 @@ if (document.getElementById("btnCekTunggakan")) {
         let btnCetak = document.getElementById("btnCetakTunggakan"); // Variabel untuk tombol cetak
         
         try {
+            // SEBELUMNYA ADA VARIABEL BULAN DI SINI, SEKARANG HANYA LOKASI DAN TAHUN
             let lokasi = document.getElementById("filterLokasiTunggakan").value;
             let tahun = document.getElementById("filterTahunTunggakan").value;
-            let bulan = document.getElementById("filterBulanTunggakan").value;
             
             if(tfoot) tfoot.style.display = "none";
-            if(btnCetak) btnCetak.style.display = "none"; // Sembunyikan tombol saat mulai mencari
+            if(btnCetak) btnCetak.style.display = "none";
             
-            tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
+            // Ubah colspan menjadi 6
+            tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
             
-            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
+            // Variabel urlAman HAPUS parameter &bulan=...
+            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
             
             fetch(urlAman)
             .then(res => res.json())
@@ -1178,27 +1188,29 @@ if (document.getElementById("btnCekTunggakan")) {
                     if(jmlSantri === 0) {
                         tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada tunggakan di bulan ini.</td></tr>";
                     } else {
-                        data.data.forEach(item => {
-                            let nominalAngka = Number(item.nominal) || 0;
-                            totalNominal += nominalAngka; 
-                            let nominalStr = nominalAngka.toLocaleString('id-ID');
-                            
-                            let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
-                            let noWA = waMentah.replace(/\D/g, "");
-                            if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
-                            
-                            let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* pada bulan *${bulan}* senilai *Rp ${nominalStr}* saat ini belum tercatat pada sistem kami.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
-                            
-                            let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
+                        // ... (di dalam fetch get_tunggakan) ...
+data.data.forEach(item => {
+    let nominalStr = item.total_nominal.toLocaleString('id-ID');
+    totalNominal += item.total_nominal; 
+    
+    let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
+    let noWA = waMentah.replace(/\D/g, "");
+    if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
+    
+    // Pesan WA Islami yang diperbarui untuk multi-bulan
+    let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* terdapat tagihan yang belum tercatat pada sistem kami, yaitu untuk bulan *${item.rincian_bulan}* (Total: ${item.jml_bulan} Bulan) senilai *Rp ${nominalStr}*.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+    
+    let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
-                            tbody.innerHTML += `<tr>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">Rp ${nominalStr}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2; text-align: center;">${linkWA}</td>
-                            </tr>`;
-                        });
+    tbody.innerHTML += `<tr>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; font-size: 13px; color: #c00000; font-weight: 600;">${item.rincian_bulan} <br><span style="color:#605e5c; font-weight:normal; font-size: 11px;">(${item.jml_bulan} Bulan)</span></td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; font-weight: bold;">Rp ${nominalStr}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; text-align: center;">${linkWA}</td>
+    </tr>`;
+});
 
                         if(tfoot) {
                             tfoot.style.display = "table-footer-group";
@@ -1231,22 +1243,17 @@ if (document.getElementById("btnCetakTunggakan")) {
         let elLokasi = document.getElementById("filterLokasiTunggakan");
         let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
         let txtTahun = document.getElementById("filterTahunTunggakan").value;
-        let elBulan = document.getElementById("filterBulanTunggakan");
-        let txtBulan = elBulan.options[elBulan.selectedIndex].text;
 
         let tableContainer = document.querySelector(".content-wrapper > div");
 
         // 2. Buat Kop Surat
-        let printHeader = document.createElement("div");
-        printHeader.id = "printHeaderTunggakan";
-        printHeader.style.display = "none";
         printHeader.innerHTML = `
             <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
                 <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
                 <div style="flex: 1; text-align: center;">
                     <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Laporan Tunggakan SPP</h1>
                     <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
-                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Tahun Ajaran: ${txtTahun} | Bulan: ${txtBulan}</p>
+                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Tahun Ajaran: ${txtTahun}</p>
                 </div>
                 <div style="width: 80px;"></div>
             </div>
@@ -1274,15 +1281,18 @@ if (document.getElementById("btnCetakTunggakan")) {
 
         // 4. Modifikasi Tabel Sementara (Hilangkan Kolom WA agar PDF rapi)
         let tfootTh1 = document.querySelector("#rekapTunggakan th:nth-child(1)");
-        if (tfootTh1) tfootTh1.setAttribute("colspan", "2"); 
+        if (tfootTh1) tfootTh1.setAttribute("colspan", "3"); 
 
         let printStyle = document.createElement('style');
         printStyle.innerHTML = `
             @media print {
                 body { background-color: white !important; margin: 0; padding: 0; }
                 .sidebar, .topbar, .user-info { display: none !important; }
-                .content-wrapper > div > div:first-child { display: none !important; } /* Sembunyikan Filter */
-                table th:last-child, table td:last-child { display: none !important; } /* Sembunyikan Kolom WA */
+                .content-wrapper > div > div:first-child { display: none !important; } 
+                
+                /* INI PENTING: Hanya sembunyikan kolom aksi di THEAD dan TBODY agar nominal di TFOOT tidak ikut hilang */
+                thead th:last-child, tbody td:last-child { display: none !important; } 
+                
                 .main-content { margin-left: 0 !important; }
                 .content-wrapper { padding: 0 !important; }
                 .content-wrapper > div { border: none !important; padding: 0 !important; box-shadow: none !important; }
@@ -1295,12 +1305,11 @@ if (document.getElementById("btnCetakTunggakan")) {
 
         window.print();
 
-        // 5. Kembalikan bentuk tabel seperti semula setelah cetak
         setTimeout(() => {
             document.head.removeChild(printStyle);
             tableContainer.removeChild(printHeader);
             tableContainer.removeChild(printFooter);
-            if (tfootTh1) tfootTh1.setAttribute("colspan", "3");
+            if (tfootTh1) tfootTh1.setAttribute("colspan", "4"); // Kembalikan ke 4 kolom setelah selesai cetak
         }, 1000);
     });
 }
