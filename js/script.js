@@ -1405,15 +1405,15 @@ data.data.forEach(item => {
                         }
                     }
                 } else {
-                    tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
                 }
             })
             .catch(error => {
-                tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal terhubung ke server. Pastikan URL di config.js benar.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal terhubung ke server. Pastikan URL di config.js benar.</td></tr>`;
             });
             
         } catch (errLokal) {
-            tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error Sistem: ${errLokal.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error Sistem: ${errLokal.message}</td></tr>`;
         }
     });
 }
