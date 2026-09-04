@@ -1513,3 +1513,43 @@ window.hapusLokasi = function(namaLokasi) {
         });
     });
 };
+
+// ==========================================
+// FITUR UBAH STATUS SANTRI (AKTIF / TIDAK AKTIF)
+// ==========================================
+window.toggleStatusSantri = function(noReg, btnElement) {
+    // Ubah tampilan tombol sementara saat proses pengiriman data
+    btnElement.textContent = "...";
+    btnElement.disabled = true;
+
+    fetch(API_URL, { 
+        method: "POST", 
+        body: JSON.stringify({ action: "toggle_status_santri", nomor_registrasi: noReg }) 
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            // 1. Update data di memori global agar tidak hilang saat pindah halaman paginasi
+            let santriIndex = dataSantriGlobal.findIndex(s => s.nomor_registrasi === noReg);
+            if (santriIndex !== -1) {
+                dataSantriGlobal[santriIndex].status = data.new_status;
+            }
+
+            // 2. Ubah warna dan teks tombol secara instan
+            if(data.new_status === "Aktif") {
+                btnElement.style.backgroundColor = "#107c41"; // Hijau
+                btnElement.textContent = "Aktif";
+            } else {
+                btnElement.style.backgroundColor = "#8a8886"; // Abu-abu
+                btnElement.textContent = "Tidak Aktif";
+            }
+        } else {
+            alert("Gagal merubah status: " + data.message);
+        }
+        btnElement.disabled = false;
+    })
+    .catch(err => {
+        alert("Terjadi kesalahan koneksi saat merubah status.");
+        btnElement.disabled = false;
+    });
+}
