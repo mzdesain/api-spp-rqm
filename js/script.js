@@ -1266,7 +1266,6 @@ if (document.getElementById("btnCetakTunggakan")) {
         let elLokasi = document.getElementById("filterLokasiTunggakan");
         let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
         let txtTahun = document.getElementById("filterTahunTunggakan").value;
-        let txtBulan = elBulan.options[elBulan.selectedIndex].text;
 
         let tableContainer = document.querySelector(".content-wrapper > div");
 
