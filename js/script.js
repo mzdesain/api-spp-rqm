@@ -542,7 +542,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // ==========================================
-// FITUR LAPORAN & CETAK
+// FITUR LAPORAN & CETAK (DENGAN TOMBOL HAPUS)
 // ==========================================
 if (document.getElementById("btnTampilkanLaporan")) {
     document.getElementById("btnTampilkanLaporan").addEventListener("click", function(e) {
@@ -553,7 +553,7 @@ if (document.getElementById("btnTampilkanLaporan")) {
         const tbody = document.getElementById("tabelDataLaporan");
         
         // Mode Loading
-        tbody.innerHTML = '<tr><td colspan="5" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #6c757d;">Sedang menarik rekap data dari server, mohon tunggu...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #6c757d;">Sedang menarik rekap data dari server, mohon tunggu...</td></tr>';
         document.getElementById("totalPemasukanLaporan").textContent = "Menghitung...";
         document.getElementById("totalPengeluaranLaporan").textContent = "Menghitung...";
         document.getElementById("saldoAkhirLaporan").textContent = "Menghitung...";
@@ -568,7 +568,7 @@ if (document.getElementById("btnTampilkanLaporan")) {
                     let totalPengeluaran = 0;
 
                     if (data.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #c00000;">Tidak ada data transaksi untuk bulan ini.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #c00000;">Tidak ada data transaksi untuk filter ini.</td></tr>';
                     } else {
                         data.data.forEach(item => {
                             totalPemasukan += item.pemasukan;
@@ -584,18 +584,20 @@ if (document.getElementById("btnTampilkanLaporan")) {
                                 <td style="border: 1px solid #d2d2d2; padding: 10px 12px; color: #323130; font-weight: 500;">${item.uraian}</td>
                                 <td style="border: 1px solid #d2d2d2; padding: 10px 12px; color: #107c41; text-align: right; font-weight: 500;">${item.pemasukan > 0 ? "Rp " + item.pemasukan.toLocaleString('id-ID') : "-"}</td>
                                 <td style="border: 1px solid #d2d2d2; padding: 10px 12px; color: #c00000; text-align: right; font-weight: 500;">${item.pengeluaran > 0 ? "Rp " + item.pengeluaran.toLocaleString('id-ID') : "-"}</td>
+                                <td style="border: 1px solid #d2d2d2; padding: 10px 12px; text-align: center;">
+                                    <button onclick="hapusTransaksi('${item.id_transaksi}')" style="background-color: #c00000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 12px;">Hapus</button>
+                                </td>
                             `;
                             tbody.appendChild(tr);
                         });
                     }
 
-                    // Update Kalkulasi Angka Bawah
+                    // Kalkulasi Total
                     let saldo = totalPemasukan - totalPengeluaran;
                     document.getElementById("totalPemasukanLaporan").textContent = "Rp " + totalPemasukan.toLocaleString('id-ID');
                     document.getElementById("totalPengeluaranLaporan").textContent = "Rp " + totalPengeluaran.toLocaleString('id-ID');
                     document.getElementById("saldoAkhirLaporan").textContent = "Rp " + saldo.toLocaleString('id-ID');
                     
-                    // Merah jika minus, Hijau jika surplus
                     if(saldo < 0) {
                         document.getElementById("saldoAkhirLaporan").style.color = "#c00000";
                     } else {
@@ -605,8 +607,132 @@ if (document.getElementById("btnTampilkanLaporan")) {
             })
             .catch(error => {
                 console.error("Error:", error);
-                tbody.innerHTML = '<tr><td colspan="5" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #c00000;">Terjadi kesalahan sistem saat memuat data.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #c00000;">Terjadi kesalahan sistem saat memuat data.</td></tr>';
             });
+    });
+}
+
+// ==========================================
+// FUNGSI HAPUS TRANSAKSI DI LAPORAN
+// ==========================================
+window.hapusTransaksi = function(idTransaksi) {
+    let modalOverlay = document.createElement("div");
+    modalOverlay.style.position = "fixed"; modalOverlay.style.top = "0"; modalOverlay.style.left = "0";
+    modalOverlay.style.width = "100%"; modalOverlay.style.height = "100%";
+    modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.4)"; modalOverlay.style.display = "flex";
+    modalOverlay.style.justifyContent = "center"; modalOverlay.style.alignItems = "center"; modalOverlay.style.zIndex = "9999";
+
+    let modalBox = document.createElement("div");
+    modalBox.style.backgroundColor = "#fff"; modalBox.style.width = "350px"; modalBox.style.border = "1px solid #d2d2d2";
+    modalBox.style.borderTop = "4px solid #c00000"; modalBox.style.borderRadius = "2px";
+    modalBox.style.padding = "25px"; modalBox.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    
+    modalBox.innerHTML = `
+        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px; font-weight: 600; color: #323130;">Konfirmasi Hapus</h3>
+        <p style="margin-bottom: 25px; font-size: 14px; color: #605e5c;">Yakin ingin membatalkan/menghapus transaksi ini secara permanen?</p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button id="btnBatalHapusTrx" style="background-color: #fff; color: #323130; border: 1px solid #8a8886; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer;">Batal</button>
+            <button id="btnYaHapusTrx" style="background-color: #c00000; color: #fff; border: 1px solid #c00000; padding: 8px 15px; border-radius: 2px; font-size: 13px; font-weight: 600; cursor: pointer;">Ya, Hapus</button>
+        </div>
+    `;
+    modalOverlay.appendChild(modalBox); document.body.appendChild(modalOverlay);
+
+    document.getElementById("btnBatalHapusTrx").addEventListener("click", () => document.body.removeChild(modalOverlay));
+
+    document.getElementById("btnYaHapusTrx").addEventListener("click", function() {
+        let btnYa = document.getElementById("btnYaHapusTrx");
+        btnYa.textContent = "Menghapus..."; btnYa.disabled = true;
+
+        fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "hapus_transaksi", id_transaksi: idTransaksi }) })
+        .then(res => res.json()).then(data => {
+            document.body.removeChild(modalOverlay);
+            let warnaTema = data.status === "success" ? "#107c41" : "#c00000";
+            if (typeof tampilkanPesanCustom === "function") tampilkanPesanCustom(data.message, warnaTema);
+            else alert(data.message);
+            
+            // Reload Laporan setelah dihapus
+            if(data.status === "success" && document.getElementById("btnTampilkanLaporan")) {
+                document.getElementById("btnTampilkanLaporan").click();
+            }
+        }).catch(err => {
+            document.body.removeChild(modalOverlay);
+            if (typeof tampilkanPesanCustom === "function") tampilkanPesanCustom("Error koneksi saat menghapus transaksi", "#c00000");
+        });
+    });
+}
+
+// ==========================================
+// FITUR CETAK / PDF LAPORAN
+// ==========================================
+if (document.getElementById("btnCetakLaporan")) {
+    document.getElementById("btnCetakLaporan").addEventListener("click", function(e) {
+        e.preventDefault();
+        
+        let elLokasi = document.getElementById("filterLokasiLaporan");
+        let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
+        let elBulan = document.getElementById("filterBulanLaporan");
+        let txtBulan = elBulan.options[elBulan.selectedIndex].text;
+        
+        const namaBulanArr = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        let now = new Date();
+        let tglCetak = now.getDate() + " " + namaBulanArr[now.getMonth()] + " " + now.getFullYear();
+
+        let tableContainer = document.querySelector(".content-wrapper > div:nth-child(2)");
+
+        let printHeader = document.createElement("div");
+        printHeader.id = "printHeader"; printHeader.style.display = "none"; 
+        printHeader.innerHTML = `
+            <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
+                <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
+                <div style="flex: 1; text-align: center;">
+                    <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Laporan Keuangan</h1>
+                    <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
+                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Periode: ${txtBulan}</p>
+                </div>
+                <div style="width: 80px;"></div>
+            </div>
+        `;
+
+        let printFooter = document.createElement("div");
+        printFooter.id = "printFooter"; printFooter.style.display = "none";
+        printFooter.innerHTML = `
+            <div style="margin-top: 50px; display: flex; justify-content: flex-end; color: #000;">
+                <div style="text-align: center; width: 250px;">
+                    <p style="margin: 0 0 70px 0; font-size: 14px;">......................., ${tglCetak}<br>Bendahara Rumah Qur'an Mahir,</p>
+                    <p style="margin: 0; font-size: 14px; font-weight: bold; text-decoration: underline;">( .................................... )</p>
+                </div>
+            </div>
+        `;
+
+        tableContainer.insertBefore(printHeader, tableContainer.firstChild); 
+        tableContainer.appendChild(printFooter); 
+        
+        let printStyle = document.createElement('style');
+        printStyle.innerHTML = `
+            @media print {
+                body { background-color: white !important; margin: 0; padding: 0; }
+                .sidebar, .topbar { display: none !important; }
+                .content-wrapper > div:nth-child(1) { display: none !important; }
+                
+                /* Sembunyikan kolom Hapus saat dicetak */
+                thead th:last-child, tbody td:last-child, tfoot th:last-child { display: none !important; }
+                
+                .main-content { margin-left: 0 !important; }
+                .content-wrapper { padding: 0 !important; }
+                .content-wrapper > div:nth-child(2) { border: none !important; padding: 0 !important; }
+                #printHeader, #printFooter { display: block !important; }
+                table th, table td { color: #000 !important; }
+            }
+        `;
+        document.head.appendChild(printStyle);
+        
+        window.print();
+        
+        setTimeout(() => {
+            document.head.removeChild(printStyle);
+            tableContainer.removeChild(printHeader);
+            tableContainer.removeChild(printFooter);
+        }, 1000);
     });
 }
 

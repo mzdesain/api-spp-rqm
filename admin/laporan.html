@@ -87,33 +87,41 @@
             <div style="width: 100%; display: block; box-sizing: border-box; border: 1px solid #d2d2d2; border-top: 4px solid #107c41; border-radius: 2px; padding: 25px; background-color: #fff;">
                 
                 <div style="width: 100%; overflow-x: auto; display: block;">
-                    <table style="width: 100%; min-width: 800px; border-collapse: collapse; text-align: left; font-size: 14px; border: 1px solid #d2d2d2;">
-                        <thead>
-                            <tr>
-                                <th style="width: 15%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Tanggal</th>
-                                <th style="width: 15%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Kategori</th>
-                                <th style="width: 40%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Uraian / Nama Santri</th>
-                                <th style="width: 15%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130; text-align: right;">Pemasukan (Rp)</th>
-                                <th style="width: 15%; border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130; text-align: right;">Pengeluaran (Rp)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelDataLaporan">
-                            <tr>
-                                <td colspan="5" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #605e5c;">Klik tombol "Tampilkan" untuk memuat data rekapitulasi.</td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="3" style="border: 1px solid #d2d2d2; background-color: #e6f2eb; padding: 12px; text-align: right; font-weight: 700; color: #107c41;">TOTAL KESELURUHAN:</th>
-                                <th id="totalPemasukanLaporan" style="border: 1px solid #d2d2d2; background-color: #e6f2eb; padding: 12px; text-align: right; font-weight: 700; color: #107c41;">Rp 0</th>
-                                <th id="totalPengeluaranLaporan" style="border: 1px solid #d2d2d2; background-color: #fff4ce; padding: 12px; text-align: right; font-weight: 700; color: #c00000;">Rp 0</th>
-                            </tr>
-                            <tr>
-                                <th colspan="3" style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 15px; text-align: right; font-weight: 700; color: #323130; font-size: 14px;">SALDO AKHIR:</th>
-                                <th colspan="2" id="saldoAkhirLaporan" style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 15px; text-align: center; font-weight: 700; color: #323130; font-size: 16px;">Rp 0</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Tanggal</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Kategori</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Uraian / Nama Santri</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Pemasukan (Rp)</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Pengeluaran (Rp)</th>
+            <!-- Tambahkan Kolom Aksi -->
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130; text-align: center;">Aksi</th>
+        </tr>
+    </thead>
+    <tbody id="tabelDataLaporan">
+        <tr>
+            <!-- Ubah colspan jadi 6 -->
+            <td colspan="6" style="border: 1px solid #d2d2d2; padding: 25px; text-align: center; color: #605e5c;">Pilih filter lokasi dan bulan, lalu klik "Tampilkan".</td>
+        </tr>
+    </tbody>
+    <tfoot id="rekapLaporan">
+        <tr>
+            <!-- Ubah colspan jadi 3 agar pas (3 + 1 + 1 + 1 = 6 kolom) -->
+            <th colspan="3" style="text-align: right; padding: 15px; border: 1px solid #d2d2d2; background-color: #e6f2eb; color: #107c41; font-weight: 700;">TOTAL KESELURUHAN:</th>
+            <th id="totalPemasukanLaporan" style="text-align: right; padding: 15px; border: 1px solid #d2d2d2; background-color: #e6f2eb; color: #107c41; font-weight: 700;">RP 0</th>
+            <th id="totalPengeluaranLaporan" style="text-align: right; padding: 15px; border: 1px solid #d2d2d2; background-color: #fff4ce; color: #c00000; font-weight: 700;">RP 0</th>
+            <!-- Tambahkan td kosong di tfoot untuk tempat kolom Aksi -->
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1;"></th>
+        </tr>
+        <tr>
+            <!-- Ubah colspan jadi 3 -->
+            <th colspan="3" style="text-align: right; padding: 15px; border: 1px solid #d2d2d2; background-color: #f3f2f1; color: #323130; font-weight: 700;">SALDO AKHIR:</th>
+            <th colspan="2" id="saldoAkhirLaporan" style="text-align: center; padding: 15px; border: 1px solid #d2d2d2; background-color: #f3f2f1; color: #107c41; font-weight: 700; font-size: 16px;">RP 0</th>
+            <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1;"></th>
+        </tr>
+    </tfoot>
+</table>
                 </div>
             </div>
             
