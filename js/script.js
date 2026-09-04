@@ -1669,127 +1669,109 @@ window.toggleStatusSantri = function(noReg, btnElement) {
     });
 };
 
-/// ==========================================
+// ==========================================
 // FITUR CETAK / PDF DATA SANTRI (SESUAI FILTER & ABJAD)
 // ==========================================
-if (document.getElementById("btnCetakSantri")) {
-    document.getElementById("btnCetakSantri").addEventListener("click", function(e) {
-        e.preventDefault();
-        
-        let tbody = document.getElementById("tabelDataSantri");
-        if(!tbody || !dataSantriGlobal || dataSantriGlobal.length === 0) {
-            if(typeof tampilkanPesanCustom === "function") tampilkanPesanCustom("Tidak ada data untuk dicetak.", "#c00000");
-            return;
-        }
+document.addEventListener("DOMContentLoaded", function() {
+    let btnCetak = document.getElementById("btnCetakSantri");
+    if (btnCetak) {
+        btnCetak.addEventListener("click", function(e) {
+            e.preventDefault();
+            
+            let tbody = document.getElementById("tabelDataSantri");
+            if(!tbody || typeof dataSantriGlobal === "undefined" || dataSantriGlobal.length === 0) {
+                if(typeof tampilkanPesanCustom === "function") tampilkanPesanCustom("Tidak ada data untuk dicetak.", "#c00000");
+                return;
+            }
 
-        let tableContainer = tbody.closest("div[style*='background: #fff']"); 
-        
-        // Cari container form pendaftaran secara spesifik untuk disembunyikan
-        let formElement = document.querySelector("form");
-        let formContainer = formElement ? formElement.closest("div[style*='background: #fff']") : null;
-        
-        // Siapkan data yang akan dicetak (Saring sesuai filter status)
-        let filteredData = dataSantriGlobal;
-        if (currentFilterStatus !== "Semua") {
-            filteredData = dataSantriGlobal.filter(item => {
-                let status = item.status || "Aktif";
-                return status === currentFilterStatus;
+            let tableContainer = tbody.closest("div[style*='background: #fff']"); 
+            let formElement = document.querySelector("form");
+            let formContainer = formElement ? formElement.closest("div[style*='background: #fff']") : null;
+            
+            // Siapkan data yang akan dicetak
+            let filteredData = dataSantriGlobal;
+            if (typeof currentFilterStatus !== "undefined" && currentFilterStatus !== "Semua") {
+                filteredData = dataSantriGlobal.filter(item => (item.status || "Aktif") === currentFilterStatus);
+            }
+
+            if(filteredData.length === 0) {
+                if(typeof tampilkanPesanCustom === "function") tampilkanPesanCustom("Data kosong, tidak bisa dicetak.", "#c00000");
+                return;
+            }
+
+            // Simpan header lama
+            let theadAsli = document.querySelector("#tabelDataSantri").previousElementSibling;
+            let headerHTMLAsli = theadAsli.innerHTML;
+
+            // Render SEMENTARA seluruh data
+            tbody.innerHTML = "";
+            filteredData.forEach((item, index) => {
+                let nominal = Number(item.nominal).toLocaleString('id-ID');
+                let statusSantri = item.status || 'Aktif';
+                let warnaStatus = statusSantri === 'Aktif' ? '#107c41' : '#c00000';
+                
+                tbody.innerHTML += `<tr>
+                    <td style="padding: 8px 10px; border: 1px solid #d2d2d2; text-align: center;">${index + 1}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">Rp ${nominal}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #d2d2d2; color: ${warnaStatus}; font-weight: bold; text-align: center;">${statusSantri}</td>
+                </tr>`;
             });
-        }
 
-        if(filteredData.length === 0) {
-            if(typeof tampilkanPesanCustom === "function") tampilkanPesanCustom("Data kosong, tidak bisa dicetak.", "#c00000");
-            return;
-        }
+            // Modifikasi Judul Kolom
+            theadAsli.innerHTML = `
+                <tr>
+                    <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No</th>
+                    <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No. Reg</th>
+                    <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nama Santri</th>
+                    <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Lokasi</th>
+                    <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nominal SPP</th>
+                    <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Status</th>
+                </tr>
+            `;
 
-        // Simpan header lama untuk dikembalikan nanti
-        let theadAsli = document.querySelector("#tabelDataSantri").previousElementSibling;
-        let headerHTMLAsli = theadAsli.innerHTML;
+            let txtStatusCetak = (typeof currentFilterStatus !== "undefined" && currentFilterStatus !== "Semua") ? currentFilterStatus : "Keseluruhan";
 
-        // Render SEMENTARA seluruh data terfilter tanpa kolom Aksi
-        tbody.innerHTML = "";
-        filteredData.forEach((item, index) => {
-            let nominal = Number(item.nominal).toLocaleString('id-ID');
-            let statusSantri = item.status || 'Aktif';
-            let warnaStatus = statusSantri === 'Aktif' ? '#107c41' : '#c00000';
-            
-            tbody.innerHTML += `<tr>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2; text-align: center;">${index + 1}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">Rp ${nominal}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2; color: ${warnaStatus}; font-weight: bold; text-align: center;">${statusSantri}</td>
-            </tr>`;
-        });
-
-        // Modifikasi Judul Kolom Sementara untuk PDF
-        theadAsli.innerHTML = `
-            <tr>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No. Reg</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nama Santri</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Lokasi</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nominal SPP</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Status</th>
-            </tr>
-        `;
-
-        let txtStatusCetak = currentFilterStatus === "Semua" ? "Keseluruhan" : currentFilterStatus;
-
-        let printHeader = document.createElement("div");
-        printHeader.id = "printHeaderSantri";
-        printHeader.innerHTML = `
-            <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
-                <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
-                <div style="flex: 1; text-align: center;">
-                    <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Data Santri Terdaftar (${txtStatusCetak})</h1>
-                    <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
+            let printHeader = document.createElement("div");
+            printHeader.id = "printHeaderSantri";
+            printHeader.innerHTML = `
+                <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
+                    <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
+                    <div style="flex: 1; text-align: center;">
+                        <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Data Santri Terdaftar (${txtStatusCetak})</h1>
+                        <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
+                    </div>
+                    <div style="width: 80px;"></div>
                 </div>
-                <div style="width: 80px;"></div>
-            </div>
-        `;
-        tableContainer.insertBefore(printHeader, tableContainer.firstChild);
+            `;
+            tableContainer.insertBefore(printHeader, tableContainer.firstChild);
 
-        // Sembunyikan form pendaftaran jika dia terpisah
-        if (formContainer && formContainer !== tableContainer) {
-            formContainer.style.display = "none";
-        }
+            if (formContainer && formContainer !== tableContainer) formContainer.style.display = "none";
 
-        let printStyle = document.createElement('style');
-        printStyle.innerHTML = `
-            @media print {
-                body { background-color: white !important; margin: 0; padding: 0; }
-                
-                /* Sembunyikan navigasi, filter, tombol cetak, dan paginasi */
-                .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3, div[style*="gap: 15px"] { 
-                    display: none !important; 
+            let printStyle = document.createElement('style');
+            printStyle.innerHTML = `
+                @media print {
+                    body { background-color: white !important; margin: 0; padding: 0; }
+                    .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3, div[style*="gap: 15px"] { display: none !important; }
+                    .main-content { margin-left: 0 !important; }
+                    .content-wrapper { padding: 0 !important; }
+                    div[style*='background: #fff'] { border: none !important; padding: 0 !important; box-shadow: none !important; }
+                    table th, table td { color: #000 !important; font-size: 12px; }
                 }
-                
-                .main-content { margin-left: 0 !important; }
-                .content-wrapper { padding: 0 !important; }
-                
-                /* Hapus garis kotak tabel utama agar pas dicetak */
-                div[style*='background: #fff'] { border: none !important; padding: 0 !important; box-shadow: none !important; }
-                table th, table td { color: #000 !important; font-size: 12px; }
-            }
-        `;
-        document.head.appendChild(printStyle);
+            `;
+            document.head.appendChild(printStyle);
 
-        // Eksekusi Cetak
-        window.print();
+            window.print();
 
-        // Kembalikan Tampilan seperti semula
-        setTimeout(() => {
-            document.head.removeChild(printStyle);
-            tableContainer.removeChild(printHeader);
-            theadAsli.innerHTML = headerHTMLAsli;
-            
-            if (formContainer && formContainer !== tableContainer) {
-                formContainer.style.display = ""; 
-            }
-            
-            renderTabelSantri(); // Render ulang 15 data + Paginasi
-        }, 1000);
-    });
-}
+            setTimeout(() => {
+                document.head.removeChild(printStyle);
+                tableContainer.removeChild(printHeader);
+                theadAsli.innerHTML = headerHTMLAsli;
+                if (formContainer && formContainer !== tableContainer) formContainer.style.display = ""; 
+                renderTabelSantri(); 
+            }, 1000);
+        });
+    }
+});
