@@ -1127,30 +1127,176 @@ document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("tabelDataSantri")) loadTabelSantri();
 });
 
+// ==========================================
+// FITUR DATA SANTRI (PAGINASI 15 DATA/HALAMAN)
+// ==========================================
+let dataSantriGlobal = [];
+let currentPageSantri = 1;
+const perPageSantri = 15;
+
 function loadTabelSantri() {
     let tbody = document.getElementById("tabelDataSantri");
-    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Memuat data...</td></tr>";
-    fetch(`${API_URL}?action=get_data_santri`)
+    let btnCetak = document.getElementById("btnCetakSantri");
+    
+    tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Memuat data...</td></tr>";
+    
+    fetch(`${API_URL}?action=get_data_santri&_nocache=${new Date().getTime()}`)
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
-            tbody.innerHTML = "";
-            data.data.forEach(item => {
-                let nominal = Number(item.nominal).toLocaleString('id-ID');
-                let statusSantri = item.status || 'Aktif'; // Fallback jika kosong = Aktif
-                
-                tbody.innerHTML += `<tr>
-                    <td>${item.nomor_registrasi}</td>
-                    <td>${item.nama_santri}</td>
-                    <td>${item.lokasi}</td>
-                    <td>Rp ${nominal}</td>
-                    <td>${item.nomor_whatsapp}</td>
-                    <td style="text-align: center;">
-                        <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
-                        <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
-                    </td>
-                </tr>`;
-            });
+            dataSantriGlobal = data.data; 
+            currentPageSantri = 1; 
+            
+            if(btnCetak && dataSantriGlobal.length > 0) btnCetak.style.display = "inline-block";
+            renderTabelSantri();
+        } else {
+            tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
         }
+    }).catch(err => {
+        tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error koneksi server.</td></tr>`;
+    });
+}
+
+function renderTabelSantri() {
+    let tbody = document.getElementById("tabelDataSantri");
+    let pagContainer = document.getElementById("paginationSantri");
+    tbody.innerHTML = "";
+    
+    if (dataSantriGlobal.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; color:#605e5c; border: 1px solid #d2d2d2;'>Belum ada data santri terdaftar.</td></tr>";
+        pagContainer.innerHTML = "";
+        return;
+    }
+
+    // Rumus potong data sesuai halaman saat ini (15 data per halaman)
+    let start = (currentPageSantri - 1) * perPageSantri;
+    let end = start + perPageSantri;
+    let paginatedData = dataSantriGlobal.slice(start, end);
+
+    paginatedData.forEach(item => {
+        let nominal = Number(item.nominal).toLocaleString('id-ID');
+        let statusSantri = item.status || 'Aktif';
+        
+        tbody.innerHTML += `<tr>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">Rp ${nominal}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_whatsapp}</td>
+            <td style="text-align: center; padding: 10px 12px; border: 1px solid #d2d2d2;">
+                <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
+                <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
+            </td>
+        </tr>`;
+    });
+
+    renderPaginationSantri();
+}
+
+function renderPaginationSantri() {
+    let pagContainer = document.getElementById("paginationSantri");
+    pagContainer.innerHTML = "";
+    
+    let totalPages = Math.ceil(dataSantriGlobal.length / perPageSantri);
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+        let btn = document.createElement("button");
+        btn.textContent = i;
+        btn.style.padding = "5px 12px";
+        btn.style.border = "1px solid #d2d2d2";
+        btn.style.backgroundColor = (i === currentPageSantri) ? "#107c41" : "#f3f2f1";
+        btn.style.color = (i === currentPageSantri) ? "#fff" : "#323130";
+        btn.style.cursor = "pointer";
+        btn.style.borderRadius = "2px";
+        btn.style.fontWeight = "bold";
+        
+        btn.addEventListener("click", function() {
+            currentPageSantri = i;
+            renderTabelSantri(); // Refresh tabel dengan halaman baru
+        });
+        pagContainer.appendChild(btn);
+    }
+}
+
+// ==========================================
+// FITUR CETAK / PDF DATA SANTRI (FULL DATA)
+// ==========================================
+if (document.getElementById("btnCetakSantri")) {
+    document.getElementById("btnCetakSantri").addEventListener("click", function(e) {
+        e.preventDefault();
+        
+        let tbody = document.getElementById("tabelDataSantri");
+        let tableContainer = tbody.closest(".content-wrapper > div");
+        
+        // Render SEMENTARA seluruh data tanpa tombol Aksi agar PDF rapi
+        tbody.innerHTML = "";
+        dataSantriGlobal.forEach((item, index) => {
+            let nominal = Number(item.nominal).toLocaleString('id-ID');
+            let statusSantri = item.status || 'Aktif';
+            let warnaStatus = statusSantri === 'Aktif' ? '#107c41' : '#c00000';
+            
+            tbody.innerHTML += `<tr>
+                <td style="padding: 8px 10px; border: 1px solid #d2d2d2; text-align: center;">${index + 1}</td>
+                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">Rp ${nominal}</td>
+                <td style="padding: 8px 10px; border: 1px solid #d2d2d2; color: ${warnaStatus}; font-weight: bold; text-align: center;">${statusSantri}</td>
+            </tr>`;
+        });
+
+        // Modifikasi Judul Kolom Sementara
+        let thAksi = document.querySelector("#tabelDataSantri").previousElementSibling.querySelector("th:last-child");
+        let thNoReg = document.querySelector("#tabelDataSantri").previousElementSibling.querySelector("th:first-child");
+        
+        let headerAsli = document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML;
+        document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML = `
+            <tr>
+                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No</th>
+                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No. Reg</th>
+                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nama Santri</th>
+                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Lokasi</th>
+                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nominal SPP</th>
+                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Status</th>
+            </tr>
+        `;
+
+        let printHeader = document.createElement("div");
+        printHeader.id = "printHeaderSantri";
+        printHeader.innerHTML = `
+            <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
+                <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
+                <div style="flex: 1; text-align: center;">
+                    <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Data Pokok Santri</h1>
+                    <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
+                </div>
+                <div style="width: 80px;"></div>
+            </div>
+        `;
+        tableContainer.insertBefore(printHeader, tableContainer.firstChild);
+
+        let printStyle = document.createElement('style');
+        printStyle.innerHTML = `
+            @media print {
+                body { background-color: white !important; margin: 0; padding: 0; }
+                .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3 { display: none !important; }
+                .main-content { margin-left: 0 !important; }
+                .content-wrapper { padding: 0 !important; }
+                .content-wrapper > div { border: none !important; padding: 0 !important; box-shadow: none !important; }
+                table th, table td { color: #000 !important; font-size: 12px; }
+            }
+        `;
+        document.head.appendChild(printStyle);
+
+        window.print();
+
+        // Kembalikan ke tampilan normal dengan 15 data per halaman setelah 1 detik
+        setTimeout(() => {
+            document.head.removeChild(printStyle);
+            tableContainer.removeChild(printHeader);
+            document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML = headerAsli;
+            renderTabelSantri(); 
+        }, 1000);
     });
 }
 

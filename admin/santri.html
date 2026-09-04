@@ -84,24 +84,32 @@
                         </div>
                     </form>
 
-                    <div style="width: 100%; border: 1px solid #d2d2d2; border-top: 4px solid #107c41; padding: 25px; background-color: #fff; margin-top: 25px;">
-    <h3 style="margin-top: 0; color: #323130;">Daftar Santri Terdaftar</h3>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-        <thead>
-            <tr>
-                <th>No. Reg</th>
-                <th>Nama Santri</th>
-                <th>Lokasi</th>
-                <th>Nominal SPP</th>
-                <th>WhatsApp</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody id="tabelDataSantri">
-            <tr><td colspan="6" style="text-align: center;">Memuat data santri...</td></tr>
-        </tbody>
-    </table>
-</div>
+                    <div style="background: #fff; padding: 20px; border-top: 4px solid #107c41; border-radius: 2px; border: 1px solid #d2d2d2;">
+                    <!-- Bagian Judul dan Tombol Cetak -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; font-size: 16px; color: #323130;">Daftar Santri Terdaftar</h3>
+                        <button id="btnCetakSantri" class="btn-primary" style="background-color: #107c41; display: none;">Cetak PDF</button>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">No. Reg</th>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Nama Santri</th>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Lokasi</th>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">Nominal SPP</th>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130;">WhatsApp</th>
+                                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 12px; font-weight: 600; color: #323130; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelDataSantri">
+                            <tr><td colspan="6" style="padding: 25px; text-align: center; border: 1px solid #d2d2d2;">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Wadah untuk tombol angka halaman (1, 2, 3...) -->
+                    <div id="paginationSantri" style="display: flex; justify-content: center; gap: 5px; margin-top: 20px;"></div>
+                </div>
 
                     <div id="pesanSantri" style="margin-top: 20px; display: none; padding: 12px; border-radius: 2px; font-size: 14px; border: 1px solid transparent; text-align: left;"></div>
                 </div>
