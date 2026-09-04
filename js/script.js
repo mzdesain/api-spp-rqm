@@ -1239,7 +1239,7 @@ if (document.getElementById("btnCetakTunggakan")) {
     document.getElementById("btnCetakTunggakan").addEventListener("click", function(e) {
         e.preventDefault();
 
-        // 1. Ambil data teks filter
+        // 1. Ambil data teks filter (HANYA LOKASI DAN TAHUN)
         let elLokasi = document.getElementById("filterLokasiTunggakan");
         let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
         let txtTahun = document.getElementById("filterTahunTunggakan").value;
@@ -1247,6 +1247,9 @@ if (document.getElementById("btnCetakTunggakan")) {
         let tableContainer = document.querySelector(".content-wrapper > div");
 
         // 2. Buat Kop Surat
+        let printHeader = document.createElement("div");
+        printHeader.id = "printHeaderTunggakan";
+        printHeader.style.display = "none";
         printHeader.innerHTML = `
             <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
                 <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
