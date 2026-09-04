@@ -1408,7 +1408,7 @@ if (document.getElementById("btnCekTunggakan")) {
                     let jmlSantri = data.data.length;
 
                     if(jmlSantri === 0) {
-                        tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada tunggakan di bulan ini.</td></tr>";
+                        tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada Santri yang menunggak.</td></tr>";
                     } else {
                         // ... (di dalam fetch get_tunggakan) ...
 data.data.forEach(item => {
