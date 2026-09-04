@@ -250,7 +250,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 lokasi_rqm: document.getElementById("lokasiRQM").value,
                 tahun_ajaran: document.getElementById("tahunAjaran").value,
                 nominal_spp: document.getElementById("nominalSPP").value,
-                nomor_whatsapp: document.getElementById("waSantri").value // <-- TAMBAHAN WA
+                nomor_whatsapp: document.getElementById("waSantri").value,
+                bulan_mulai: document.getElementById("bulanMasukSantri") ? document.getElementById("bulanMasukSantri").value : "Juli"
             };
             
             // Tampilan loading
