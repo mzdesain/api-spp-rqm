@@ -1092,34 +1092,6 @@ window.hapusSantri = function(noReg) {
     });
 }
 
-window.toggleStatusSantri = function(noReg, btnElement) {
-    btnElement.textContent = "Loading...";
-    btnElement.disabled = true;
-
-    fetch(API_URL, { 
-        method: "POST", 
-        body: JSON.stringify({ action: "toggle_status_santri", nomor_registrasi: noReg }) 
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            // Ubah warna dan teks tombol langsung tanpa perlu refresh tabel
-            if(data.new_status === "Aktif") {
-                btnElement.style.backgroundColor = "#107c41";
-                btnElement.textContent = "Aktif";
-            } else {
-                btnElement.style.backgroundColor = "#8a8886";
-                btnElement.textContent = "Tidak Aktif";
-            }
-        }
-        btnElement.disabled = false;
-    })
-    .catch(err => {
-        alert("Gagal merubah status");
-        btnElement.disabled = false;
-    });
-}
-
 // ==========================================
 // TAMPILKAN TABEL SANTRI
 // ==========================================
@@ -1127,190 +1099,22 @@ document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("tabelDataSantri")) loadTabelSantri();
 });
 
-// ==========================================
-// FITUR DATA SANTRI (PAGINASI 15 DATA/HALAMAN)
-// ==========================================
-let dataSantriGlobal = [];
-let currentPageSantri = 1;
-const perPageSantri = 15;
-
 function loadTabelSantri() {
     let tbody = document.getElementById("tabelDataSantri");
-    let btnCetak = document.getElementById("btnCetakSantri");
-    
-    tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Memuat data...</td></tr>";
-    
-    fetch(`${API_URL}?action=get_data_santri&_nocache=${new Date().getTime()}`)
+    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Memuat data...</td></tr>";
+    fetch(`${API_URL}?action=get_data_santri`)
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
-            dataSantriGlobal = data.data; 
-            currentPageSantri = 1; 
-            
-            if(btnCetak && dataSantriGlobal.length > 0) btnCetak.style.display = "inline-block";
-            renderTabelSantri();
-        } else {
-            tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
+            tbody.innerHTML = "";
+            data.data.forEach(item => {
+                let nominal = Number(item.nominal).toLocaleString('id-ID');
+                tbody.innerHTML += `<tr>
+                    <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
+                    <td>${item.lokasi}</td><td>Rp ${nominal}</td><td>${item.nomor_whatsapp}</td>
+                    <td style="text-align: center;"><button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">Hapus</button></td>
+                </tr>`;
+            });
         }
-    }).catch(err => {
-        tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error koneksi server.</td></tr>`;
-    });
-}
-
-function renderTabelSantri() {
-    let tbody = document.getElementById("tabelDataSantri");
-    let pagContainer = document.getElementById("paginationSantri");
-    tbody.innerHTML = "";
-    
-    if (dataSantriGlobal.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; color:#605e5c; border: 1px solid #d2d2d2;'>Belum ada data santri terdaftar.</td></tr>";
-        pagContainer.innerHTML = "";
-        return;
-    }
-
-    // Rumus potong data sesuai halaman saat ini (15 data per halaman)
-    let start = (currentPageSantri - 1) * perPageSantri;
-    let end = start + perPageSantri;
-    let paginatedData = dataSantriGlobal.slice(start, end);
-
-    paginatedData.forEach(item => {
-        let nominal = Number(item.nominal).toLocaleString('id-ID');
-        let statusSantri = item.status || 'Aktif';
-        
-        tbody.innerHTML += `<tr>
-            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
-            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
-            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
-            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">Rp ${nominal}</td>
-            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_whatsapp}</td>
-            <td style="text-align: center; padding: 10px 12px; border: 1px solid #d2d2d2;">
-                <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
-                <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
-            </td>
-        </tr>`;
-    });
-
-    renderPaginationSantri();
-}
-
-function renderPaginationSantri() {
-    let pagContainer = document.getElementById("paginationSantri");
-    pagContainer.innerHTML = "";
-    
-    let totalPages = Math.ceil(dataSantriGlobal.length / perPageSantri);
-    if (totalPages <= 1) return;
-
-    for (let i = 1; i <= totalPages; i++) {
-        let btn = document.createElement("button");
-        btn.textContent = i;
-        btn.style.padding = "5px 12px";
-        btn.style.border = "1px solid #d2d2d2";
-        btn.style.backgroundColor = (i === currentPageSantri) ? "#107c41" : "#f3f2f1";
-        btn.style.color = (i === currentPageSantri) ? "#fff" : "#323130";
-        btn.style.cursor = "pointer";
-        btn.style.borderRadius = "2px";
-        btn.style.fontWeight = "bold";
-        
-        btn.addEventListener("click", function() {
-            currentPageSantri = i;
-            renderTabelSantri(); // Refresh tabel dengan halaman baru
-        });
-        pagContainer.appendChild(btn);
-    }
-}
-
-// ==========================================
-// FITUR CETAK / PDF DATA SANTRI (FULL DATA)
-// ==========================================
-if (document.getElementById("btnCetakSantri")) {
-    document.getElementById("btnCetakSantri").addEventListener("click", function(e) {
-        e.preventDefault();
-        
-        let tbody = document.getElementById("tabelDataSantri");
-        let tableContainer = tbody.closest("div[style*='background: #fff']"); 
-        
-        // Cari container form pendaftaran secara spesifik untuk disembunyikan dengan aman
-        let formElement = document.querySelector("form");
-        let formContainer = formElement ? formElement.closest("div[style*='background: #fff']") : null;
-        
-        // Render SEMENTARA seluruh data tanpa tombol Aksi agar PDF rapi
-        tbody.innerHTML = "";
-        dataSantriGlobal.forEach((item, index) => {
-            let nominal = Number(item.nominal).toLocaleString('id-ID');
-            let statusSantri = item.status || 'Aktif';
-            let warnaStatus = statusSantri === 'Aktif' ? '#107c41' : '#c00000';
-            
-            tbody.innerHTML += `<tr>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2; text-align: center;">${index + 1}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2;">Rp ${nominal}</td>
-                <td style="padding: 8px 10px; border: 1px solid #d2d2d2; color: ${warnaStatus}; font-weight: bold; text-align: center;">${statusSantri}</td>
-            </tr>`;
-        });
-
-        // Modifikasi Judul Kolom Sementara
-        let headerAsli = document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML;
-        document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML = `
-            <tr>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No. Reg</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nama Santri</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Lokasi</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Nominal SPP</th>
-                <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">Status</th>
-            </tr>
-        `;
-
-        let printHeader = document.createElement("div");
-        printHeader.id = "printHeaderSantri";
-        printHeader.innerHTML = `
-            <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
-                <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
-                <div style="flex: 1; text-align: center;">
-                    <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Data Pokok Santri</h1>
-                    <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
-                </div>
-                <div style="width: 80px;"></div>
-            </div>
-        `;
-        tableContainer.insertBefore(printHeader, tableContainer.firstChild);
-
-        // Sembunyikan form hanya jika dia bukan container yang sama dengan tabel
-        if (formContainer && formContainer !== tableContainer) {
-            formContainer.style.display = "none";
-        }
-
-        let printStyle = document.createElement('style');
-        printStyle.innerHTML = `
-            @media print {
-                body { background-color: white !important; margin: 0; padding: 0; }
-                .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3 { display: none !important; }
-                .main-content { margin-left: 0 !important; }
-                .content-wrapper { padding: 0 !important; }
-                
-                /* Hapus garis luar kotak agar terlihat seperti dokumen resmi */
-                div[style*='background: #fff'] { border: none !important; padding: 0 !important; box-shadow: none !important; }
-                table th, table td { color: #000 !important; font-size: 12px; }
-            }
-        `;
-        document.head.appendChild(printStyle);
-
-        window.print();
-
-        // Kembalikan ke tampilan normal setelah cetak
-        setTimeout(() => {
-            document.head.removeChild(printStyle);
-            tableContainer.removeChild(printHeader);
-            document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML = headerAsli;
-            
-            // Munculkan kembali formnya
-            if (formContainer && formContainer !== tableContainer) {
-                formContainer.style.display = ""; 
-            }
-            
-            renderTabelSantri(); 
-        }, 1000);
     });
 }
 
@@ -1350,18 +1154,16 @@ if (document.getElementById("btnCekTunggakan")) {
         let btnCetak = document.getElementById("btnCetakTunggakan"); // Variabel untuk tombol cetak
         
         try {
-            // SEBELUMNYA ADA VARIABEL BULAN DI SINI, SEKARANG HANYA LOKASI DAN TAHUN
             let lokasi = document.getElementById("filterLokasiTunggakan").value;
             let tahun = document.getElementById("filterTahunTunggakan").value;
+            let bulan = document.getElementById("filterBulanTunggakan").value;
             
             if(tfoot) tfoot.style.display = "none";
-            if(btnCetak) btnCetak.style.display = "none";
+            if(btnCetak) btnCetak.style.display = "none"; // Sembunyikan tombol saat mulai mencari
             
-            // Ubah colspan menjadi 6
-            tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
             
-            // Variabel urlAman HAPUS parameter &bulan=...
-            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
+            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&bulan=${encodeURIComponent(bulan)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
             
             fetch(urlAman)
             .then(res => res.json())
@@ -1374,29 +1176,29 @@ if (document.getElementById("btnCekTunggakan")) {
                     let jmlSantri = data.data.length;
 
                     if(jmlSantri === 0) {
-tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, seluruh santri sudah lunas pada filter ini.</td></tr>";                    } else {
-data.data.forEach(item => {
-    let nominalStr = item.total_nominal.toLocaleString('id-ID');
-    totalNominal += item.total_nominal; 
-    
-    let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
-    let noWA = waMentah.replace(/\D/g, "");
-    if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
-    
-    // Pesan WA Islami yang diperbarui untuk multi-bulan
-    let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* terdapat tagihan yang belum tercatat pada sistem kami, yaitu untuk bulan *${item.rincian_bulan}* (Total: ${item.jml_bulan} Bulan) senilai *Rp ${nominalStr}*.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
-    
-    let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
+                        tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada tunggakan di bulan ini.</td></tr>";
+                    } else {
+                        data.data.forEach(item => {
+                            let nominalAngka = Number(item.nominal) || 0;
+                            totalNominal += nominalAngka; 
+                            let nominalStr = nominalAngka.toLocaleString('id-ID');
+                            
+                            let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
+                            let noWA = waMentah.replace(/\D/g, "");
+                            if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
+                            
+                            let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* pada bulan *${bulan}* senilai *Rp ${nominalStr}* saat ini belum tercatat pada sistem kami.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+                            
+                            let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
-    tbody.innerHTML += `<tr>
-        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
-        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
-        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
-        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; font-size: 13px; color: #c00000; font-weight: 600;">${item.rincian_bulan} <br><span style="color:#605e5c; font-weight:normal; font-size: 11px;">(${item.jml_bulan} Bulan)</span></td>
-        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; font-weight: bold;">Rp ${nominalStr}</td>
-        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; text-align: center;">${linkWA}</td>
-    </tr>`;
-});
+                            tbody.innerHTML += `<tr>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">Rp ${nominalStr}</td>
+                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2; text-align: center;">${linkWA}</td>
+                            </tr>`;
+                        });
 
                         if(tfoot) {
                             tfoot.style.display = "table-footer-group";
@@ -1405,15 +1207,15 @@ data.data.forEach(item => {
                         }
                     }
                 } else {
-                    tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
                 }
             })
             .catch(error => {
-                tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal terhubung ke server. Pastikan URL di config.js benar.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal terhubung ke server. Pastikan URL di config.js benar.</td></tr>`;
             });
             
         } catch (errLokal) {
-            tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error Sistem: ${errLokal.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan='5' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error Sistem: ${errLokal.message}</td></tr>`;
         }
     });
 }
@@ -1425,10 +1227,12 @@ if (document.getElementById("btnCetakTunggakan")) {
     document.getElementById("btnCetakTunggakan").addEventListener("click", function(e) {
         e.preventDefault();
 
-        // 1. Ambil data teks filter (HANYA LOKASI DAN TAHUN)
+        // 1. Ambil data teks filter
         let elLokasi = document.getElementById("filterLokasiTunggakan");
         let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
         let txtTahun = document.getElementById("filterTahunTunggakan").value;
+        let elBulan = document.getElementById("filterBulanTunggakan");
+        let txtBulan = elBulan.options[elBulan.selectedIndex].text;
 
         let tableContainer = document.querySelector(".content-wrapper > div");
 
@@ -1442,7 +1246,7 @@ if (document.getElementById("btnCetakTunggakan")) {
                 <div style="flex: 1; text-align: center;">
                     <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Laporan Tunggakan SPP</h1>
                     <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
-                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Tahun Ajaran: ${txtTahun}</p>
+                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Tahun Ajaran: ${txtTahun} | Bulan: ${txtBulan}</p>
                 </div>
                 <div style="width: 80px;"></div>
             </div>
@@ -1470,18 +1274,15 @@ if (document.getElementById("btnCetakTunggakan")) {
 
         // 4. Modifikasi Tabel Sementara (Hilangkan Kolom WA agar PDF rapi)
         let tfootTh1 = document.querySelector("#rekapTunggakan th:nth-child(1)");
-        if (tfootTh1) tfootTh1.setAttribute("colspan", "3"); 
+        if (tfootTh1) tfootTh1.setAttribute("colspan", "2"); 
 
         let printStyle = document.createElement('style');
         printStyle.innerHTML = `
             @media print {
                 body { background-color: white !important; margin: 0; padding: 0; }
                 .sidebar, .topbar, .user-info { display: none !important; }
-                .content-wrapper > div > div:first-child { display: none !important; } 
-                
-                /* INI PENTING: Hanya sembunyikan kolom aksi di THEAD dan TBODY agar nominal di TFOOT tidak ikut hilang */
-                thead th:last-child, tbody td:last-child { display: none !important; } 
-                
+                .content-wrapper > div > div:first-child { display: none !important; } /* Sembunyikan Filter */
+                table th:last-child, table td:last-child { display: none !important; } /* Sembunyikan Kolom WA */
                 .main-content { margin-left: 0 !important; }
                 .content-wrapper { padding: 0 !important; }
                 .content-wrapper > div { border: none !important; padding: 0 !important; box-shadow: none !important; }
@@ -1494,11 +1295,12 @@ if (document.getElementById("btnCetakTunggakan")) {
 
         window.print();
 
+        // 5. Kembalikan bentuk tabel seperti semula setelah cetak
         setTimeout(() => {
             document.head.removeChild(printStyle);
             tableContainer.removeChild(printHeader);
             tableContainer.removeChild(printFooter);
-            if (tfootTh1) tfootTh1.setAttribute("colspan", "4"); // Kembalikan ke 4 kolom setelah selesai cetak
+            if (tfootTh1) tfootTh1.setAttribute("colspan", "3");
         }, 1000);
     });
 }
