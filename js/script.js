@@ -1669,7 +1669,7 @@ window.toggleStatusSantri = function(noReg, btnElement) {
     });
 };
 
-// ==========================================
+/// ==========================================
 // FITUR CETAK / PDF DATA SANTRI (SESUAI FILTER & ABJAD)
 // ==========================================
 if (document.getElementById("btnCetakSantri")) {
