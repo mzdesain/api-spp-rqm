@@ -1136,10 +1136,18 @@ function loadTabelSantri() {
             tbody.innerHTML = "";
             data.data.forEach(item => {
                 let nominal = Number(item.nominal).toLocaleString('id-ID');
+                let statusSantri = item.status || 'Aktif'; // Fallback jika kosong = Aktif
+                
                 tbody.innerHTML += `<tr>
-                    <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
-                    <td>${item.lokasi}</td><td>Rp ${nominal}</td><td>${item.nomor_whatsapp}</td>
-                    <td style="text-align: center;"><button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">Hapus</button> <button onclick="toggleStatusSantri('${item.noReg}', this)" style="background-color: ${item.status === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 4px 8px; border-radius: 2px;">${item.status || 'Aktif'}</button></td>
+                    <td>${item.nomor_registrasi}</td>
+                    <td>${item.nama_santri}</td>
+                    <td>${item.lokasi}</td>
+                    <td>Rp ${nominal}</td>
+                    <td>${item.nomor_whatsapp}</td>
+                    <td style="text-align: center;">
+                        <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
+                        <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
+                    </td>
                 </tr>`;
             });
         }
