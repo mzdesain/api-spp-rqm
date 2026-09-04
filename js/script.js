@@ -1736,7 +1736,7 @@ document.addEventListener("DOMContentLoaded", function() {
             printHeader.id = "printHeaderSantri";
             printHeader.innerHTML = `
                 <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
-                    <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
+                    <img src="../assets/logo.png" style="width: 80px; height: auto; margin-right: 20px;">
                     <div style="flex: 1; text-align: center;">
                         <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Data Pokok Santri (${txtStatusCetak})</h1>
                         <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
