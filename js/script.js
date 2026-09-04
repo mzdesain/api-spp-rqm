@@ -1226,7 +1226,11 @@ if (document.getElementById("btnCetakSantri")) {
         e.preventDefault();
         
         let tbody = document.getElementById("tabelDataSantri");
-        let tableContainer = tbody.closest(".content-wrapper > div:last-child") || tbody.closest(".content-wrapper > div");
+        let tableContainer = tbody.closest("div[style*='background: #fff']"); 
+        
+        // Cari container form pendaftaran secara spesifik untuk disembunyikan dengan aman
+        let formElement = document.querySelector("form");
+        let formContainer = formElement ? formElement.closest("div[style*='background: #fff']") : null;
         
         // Render SEMENTARA seluruh data tanpa tombol Aksi agar PDF rapi
         tbody.innerHTML = "";
@@ -1272,19 +1276,21 @@ if (document.getElementById("btnCetakSantri")) {
         `;
         tableContainer.insertBefore(printHeader, tableContainer.firstChild);
 
+        // Sembunyikan form hanya jika dia bukan container yang sama dengan tabel
+        if (formContainer && formContainer !== tableContainer) {
+            formContainer.style.display = "none";
+        }
+
         let printStyle = document.createElement('style');
         printStyle.innerHTML = `
             @media print {
                 body { background-color: white !important; margin: 0; padding: 0; }
-                
-                /* Sembunyikan elemen yang tidak perlu termasuk KOTAK FORM (first-child) */
-                .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3, .content-wrapper > div:first-child { 
-                    display: none !important; 
-                }
-                
+                .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3 { display: none !important; }
                 .main-content { margin-left: 0 !important; }
                 .content-wrapper { padding: 0 !important; }
-                .content-wrapper > div:last-child { border: none !important; padding: 0 !important; box-shadow: none !important; }
+                
+                /* Hapus garis luar kotak agar terlihat seperti dokumen resmi */
+                div[style*='background: #fff'] { border: none !important; padding: 0 !important; box-shadow: none !important; }
                 table th, table td { color: #000 !important; font-size: 12px; }
             }
         `;
@@ -1297,6 +1303,12 @@ if (document.getElementById("btnCetakSantri")) {
             document.head.removeChild(printStyle);
             tableContainer.removeChild(printHeader);
             document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML = headerAsli;
+            
+            // Munculkan kembali formnya
+            if (formContainer && formContainer !== tableContainer) {
+                formContainer.style.display = ""; 
+            }
+            
             renderTabelSantri(); 
         }, 1000);
     });
