@@ -1518,7 +1518,7 @@ window.hapusLokasi = function(namaLokasi) {
 // FITUR UBAH STATUS SANTRI (AKTIF / TIDAK AKTIF)
 // ==========================================
 window.toggleStatusSantri = function(noReg, btnElement) {
-    // Ubah tampilan tombol sementara saat proses pengiriman data
+    let teksAsli = btnElement.textContent;
     btnElement.textContent = "...";
     btnElement.disabled = true;
 
@@ -1529,27 +1529,37 @@ window.toggleStatusSantri = function(noReg, btnElement) {
     .then(res => res.json())
     .then(data => {
         if(data.status === "success") {
-            // 1. Update data di memori global agar tidak hilang saat pindah halaman paginasi
-            let santriIndex = dataSantriGlobal.findIndex(s => s.nomor_registrasi === noReg);
+            // 1. Update data di memori global
+            let santriIndex = dataSantriGlobal.findIndex(s => String(s.nomor_registrasi).trim().toUpperCase() === String(noReg).trim().toUpperCase());
             if (santriIndex !== -1) {
                 dataSantriGlobal[santriIndex].status = data.new_status;
             }
 
-            // 2. Ubah warna dan teks tombol secara instan
+            // 2. Ubah warna dan teks tombol
             if(data.new_status === "Aktif") {
-                btnElement.style.backgroundColor = "#107c41"; // Hijau
+                btnElement.style.backgroundColor = "#107c41";
                 btnElement.textContent = "Aktif";
             } else {
-                btnElement.style.backgroundColor = "#8a8886"; // Abu-abu
+                btnElement.style.backgroundColor = "#8a8886";
                 btnElement.textContent = "Tidak Aktif";
             }
         } else {
-            alert("Gagal merubah status: " + data.message);
+            btnElement.textContent = teksAsli;
+            if (typeof tampilkanPesanCustom === "function") {
+                tampilkanPesanCustom("Gagal: " + data.message, "#c00000");
+            } else {
+                alert("Gagal: " + data.message);
+            }
         }
         btnElement.disabled = false;
     })
     .catch(err => {
-        alert("Terjadi kesalahan koneksi saat merubah status.");
+        btnElement.textContent = teksAsli;
         btnElement.disabled = false;
+        if (typeof tampilkanPesanCustom === "function") {
+            tampilkanPesanCustom("Terjadi kesalahan koneksi saat mengubah status.", "#c00000");
+        } else {
+            alert("Terjadi kesalahan koneksi saat mengubah status.");
+        }
     });
-}
+};
