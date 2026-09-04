@@ -1099,31 +1099,126 @@ document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("tabelDataSantri")) loadTabelSantri();
 });
 
+// ==========================================
+// FITUR DATA SANTRI (SORT ABJAD, FILTER & PAGINASI 15 DATA)
+// ==========================================
+let dataSantriGlobal = [];
+let currentPageSantri = 1;
+const perPageSantri = 15;
+
 function loadTabelSantri() {
     let tbody = document.getElementById("tabelDataSantri");
-    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Memuat data...</td></tr>";
-    fetch(`${API_URL}?action=get_data_santri`)
-    .then(res => res.json()).then(data => {
+    let btnCetak = document.getElementById("btnCetakSantri");
+    
+    tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Memuat data...</td></tr>";
+    
+    fetch(`${API_URL}?action=get_data_santri&_nocache=${new Date().getTime()}`)
+    .then(res => res.json())
+    .then(data => {
         if(data.status === "success") {
-            tbody.innerHTML = "";
-            data.data.forEach(item => {
-                let nominal = Number(item.nominal).toLocaleString('id-ID');
-                let statusSantri = item.status || 'Aktif'; // Fallback jika kosong = Aktif
-                
-                tbody.innerHTML += `<tr>
-                    <td>${item.nomor_registrasi}</td>
-                    <td>${item.nama_santri}</td>
-                    <td>${item.lokasi}</td>
-                    <td>Rp ${nominal}</td>
-                    <td>${item.nomor_whatsapp}</td>
-                    <td style="text-align: center;">
-                        <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
-                        <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
-                    </td>
-                </tr>`;
+            // Urutkan data santri secara alfabetis berdasarkan Nama (A - Z)
+            dataSantriGlobal = data.data.sort((a, b) => {
+                let namaA = (a.nama_santri || "").toUpperCase();
+                let namaB = (b.nama_santri || "").toUpperCase();
+                return namaA.localeCompare(namaB);
             });
+
+            currentPageSantri = 1;
+            if(btnCetak && dataSantriGlobal.length > 0) btnCetak.style.display = "inline-block";
+            renderTabelSantri();
+        } else {
+            tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Gagal: ${data.message}</td></tr>`;
         }
+    })
+    .catch(err => {
+        tbody.innerHTML = `<tr><td colspan='6' style='padding: 25px; text-align:center; color:#c00000; border: 1px solid #d2d2d2;'>Error koneksi server.</td></tr>`;
     });
+}
+
+// Event Listener Filter Status Santri
+document.addEventListener("DOMContentLoaded", function() {
+    let filterStatus = document.getElementById("filterStatusSantri");
+    if (filterStatus) {
+        filterStatus.addEventListener("change", function() {
+            currentPageSantri = 1; // Reset ke halaman 1 saat filter diubah
+            renderTabelSantri();
+        });
+    }
+});
+
+function getSantriFiltered() {
+    let filterEl = document.getElementById("filterStatusSantri");
+    let statusPilihan = filterEl ? filterEl.value : "Semua";
+
+    if (statusPilihan === "Semua") {
+        return dataSantriGlobal;
+    }
+    return dataSantriGlobal.filter(item => (item.status || "Aktif") === statusPilihan);
+}
+
+function renderTabelSantri() {
+    let tbody = document.getElementById("tabelDataSantri");
+    let pagContainer = document.getElementById("paginationSantri");
+    tbody.innerHTML = "";
+
+    let dataTampil = getSantriFiltered();
+
+    if (dataTampil.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; color:#605e5c; border: 1px solid #d2d2d2;'>Tidak ada data santri pada filter ini.</td></tr>";
+        if (pagContainer) pagContainer.innerHTML = "";
+        return;
+    }
+
+    // Paginasi: 15 data per halaman
+    let start = (currentPageSantri - 1) * perPageSantri;
+    let end = start + perPageSantri;
+    let paginatedData = dataTampil.slice(start, end);
+
+    paginatedData.forEach(item => {
+        let nominal = Number(item.nominal).toLocaleString('id-ID');
+        let statusSantri = item.status || 'Aktif';
+
+        tbody.innerHTML += `<tr>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">Rp ${nominal}</td>
+            <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_whatsapp}</td>
+            <td style="text-align: center; padding: 10px 12px; border: 1px solid #d2d2d2;">
+                <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
+                <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
+            </td>
+        </tr>`;
+    });
+
+    renderPaginationSantri(dataTampil.length);
+}
+
+function renderPaginationSantri(totalData) {
+    let pagContainer = document.getElementById("paginationSantri");
+    if (!pagContainer) return;
+    pagContainer.innerHTML = "";
+
+    let totalPages = Math.ceil(totalData / perPageSantri);
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+        let btn = document.createElement("button");
+        btn.textContent = i;
+        btn.style.padding = "5px 12px";
+        btn.style.border = "1px solid #d2d2d2";
+        btn.style.backgroundColor = (i === currentPageSantri) ? "#107c41" : "#f3f2f1";
+        btn.style.color = (i === currentPageSantri) ? "#fff" : "#323130";
+        btn.style.cursor = "pointer";
+        btn.style.borderRadius = "2px";
+        btn.style.fontWeight = "bold";
+
+        btn.addEventListener("click", function() {
+            currentPageSantri = i;
+            renderTabelSantri();
+        });
+        pagContainer.appendChild(btn);
+    }
 }
 
 // ==========================================
