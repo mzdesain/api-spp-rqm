@@ -1092,6 +1092,34 @@ window.hapusSantri = function(noReg) {
     });
 }
 
+window.toggleStatusSantri = function(noReg, btnElement) {
+    btnElement.textContent = "Loading...";
+    btnElement.disabled = true;
+
+    fetch(API_URL, { 
+        method: "POST", 
+        body: JSON.stringify({ action: "toggle_status_santri", nomor_registrasi: noReg }) 
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            // Ubah warna dan teks tombol langsung tanpa perlu refresh tabel
+            if(data.new_status === "Aktif") {
+                btnElement.style.backgroundColor = "#107c41";
+                btnElement.textContent = "Aktif";
+            } else {
+                btnElement.style.backgroundColor = "#8a8886";
+                btnElement.textContent = "Tidak Aktif";
+            }
+        }
+        btnElement.disabled = false;
+    })
+    .catch(err => {
+        alert("Gagal merubah status");
+        btnElement.disabled = false;
+    });
+}
+
 // ==========================================
 // TAMPILKAN TABEL SANTRI
 // ==========================================
@@ -1111,7 +1139,7 @@ function loadTabelSantri() {
                 tbody.innerHTML += `<tr>
                     <td>${item.nomor_registrasi}</td><td>${item.nama_santri}</td>
                     <td>${item.lokasi}</td><td>Rp ${nominal}</td><td>${item.nomor_whatsapp}</td>
-                    <td style="text-align: center;"><button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">Hapus</button></td>
+                    <td style="text-align: center;"><button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">Hapus</button> <button onclick="toggleStatusSantri('${item.noReg}', this)" style="background-color: ${item.status === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 4px 8px; border-radius: 2px;">${item.status || 'Aktif'}</button></td>
                 </tr>`;
             });
         }
@@ -1178,27 +1206,28 @@ if (document.getElementById("btnCekTunggakan")) {
                     if(jmlSantri === 0) {
                         tbody.innerHTML = "<tr><td colspan='5' style='padding: 25px; text-align:center; color:#107c41; font-weight:bold; border: 1px solid #d2d2d2;'>Alhamdulillah, tidak ada tunggakan di bulan ini.</td></tr>";
                     } else {
-                        data.data.forEach(item => {
-                            let nominalAngka = Number(item.nominal) || 0;
-                            totalNominal += nominalAngka; 
-                            let nominalStr = nominalAngka.toLocaleString('id-ID');
-                            
-                            let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
-                            let noWA = waMentah.replace(/\D/g, "");
-                            if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
-                            
-                            let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* pada bulan *${bulan}* senilai *Rp ${nominalStr}* saat ini belum tercatat pada sistem kami.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
-                            
-                            let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
+data.data.forEach(item => {
+    let nominalStr = item.total_nominal.toLocaleString('id-ID');
+    totalNominal += item.total_nominal; 
+    
+    let waMentah = item.nomor_whatsapp ? String(item.nomor_whatsapp) : "";
+    let noWA = waMentah.replace(/\D/g, "");
+    if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
+    
+    // Pesan WA Islami yang diperbarui untuk multi-bulan
+    let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* terdapat tagihan yang belum tercatat pada sistem kami, yaitu untuk bulan *${item.rincian_bulan}* (Total: ${item.jml_bulan} Bulan) senilai *Rp ${nominalStr}*.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+    
+    let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
-                            tbody.innerHTML += `<tr>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">Rp ${nominalStr}</td>
-                                <td style="padding: 10px 12px; border: 1px solid #d2d2d2; text-align: center;">${linkWA}</td>
-                            </tr>`;
-                        });
+    tbody.innerHTML += `<tr>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_registrasi}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nama_santri}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.lokasi}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; font-size: 13px; color: #c00000; font-weight: 600;">${item.rincian_bulan} <br><span style="color:#605e5c; font-weight:normal; font-size: 11px;">(${item.jml_bulan} Bulan)</span></td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; font-weight: bold;">Rp ${nominalStr}</td>
+        <td style="padding: 10px 12px; border: 1px solid #d2d2d2; text-align: center;">${linkWA}</td>
+    </tr>`;
+});
 
                         if(tfoot) {
                             tfoot.style.display = "table-footer-group";
