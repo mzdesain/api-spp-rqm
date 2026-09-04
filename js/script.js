@@ -1684,9 +1684,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
-            let tableContainer = tbody.closest("div[style*='background: #fff']"); 
-            let formElement = document.querySelector("form");
-            let formContainer = formElement ? formElement.closest("div[style*='background: #fff']") : null;
+            let tableContainer = tbody.closest("div[style*='background: #fff']") || document.querySelector(".content-wrapper"); 
             
             // Siapkan data yang akan dicetak
             let filteredData = dataSantriGlobal;
@@ -1720,7 +1718,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </tr>`;
             });
 
-            // Modifikasi Judul Kolom
+            // Modifikasi Judul Kolom Sementara
             theadAsli.innerHTML = `
                 <tr>
                     <th style="border: 1px solid #d2d2d2; background-color: #f3f2f1; padding: 10px;">No</th>
@@ -1740,7 +1738,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
                     <img src="../assets/Foto Gedung.jpeg" style="width: 80px; height: auto; margin-right: 20px;">
                     <div style="flex: 1; text-align: center;">
-                        <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Data Santri Terdaftar (${txtStatusCetak})</h1>
+                        <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Data Pokok Santri (${txtStatusCetak})</h1>
                         <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
                     </div>
                     <div style="width: 80px;"></div>
@@ -1748,16 +1746,22 @@ document.addEventListener("DOMContentLoaded", function() {
             `;
             tableContainer.insertBefore(printHeader, tableContainer.firstChild);
 
-            if (formContainer && formContainer !== tableContainer) formContainer.style.display = "none";
-
             let printStyle = document.createElement('style');
             printStyle.innerHTML = `
                 @media print {
                     body { background-color: white !important; margin: 0; padding: 0; }
-                    .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3, div[style*="gap: 15px"] { display: none !important; }
+                    
+                    /* KUNCI PERBAIKAN: Sembunyikan elemen Form, Dropdown, Label, dan Teks yang tidak perlu */
+                    .sidebar, .topbar, .user-info, form, select, label, h3, #paginationSantri, #btnCetakSantri, div[style*="gap: 15px"] { 
+                        display: none !important; 
+                    }
+                    
                     .main-content { margin-left: 0 !important; }
                     .content-wrapper { padding: 0 !important; }
+                    
+                    /* Hilangkan garis kotak pembungkus */
                     div[style*='background: #fff'] { border: none !important; padding: 0 !important; box-shadow: none !important; }
+                    
                     table th, table td { color: #000 !important; font-size: 12px; }
                 }
             `;
@@ -1769,7 +1773,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.head.removeChild(printStyle);
                 tableContainer.removeChild(printHeader);
                 theadAsli.innerHTML = headerHTMLAsli;
-                if (formContainer && formContainer !== tableContainer) formContainer.style.display = ""; 
                 renderTabelSantri(); 
             }, 1000);
         });
