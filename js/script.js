@@ -1350,15 +1350,19 @@ if (document.getElementById("btnCekTunggakan")) {
         let btnCetak = document.getElementById("btnCetakTunggakan"); // Variabel untuk tombol cetak
         
         try {
+            // SEBELUMNYA ADA VARIABEL BULAN DI SINI, SEKARANG HANYA LOKASI DAN TAHUN
             let lokasi = document.getElementById("filterLokasiTunggakan").value;
             let tahun = document.getElementById("filterTahunTunggakan").value;
             
             if(tfoot) tfoot.style.display = "none";
             if(btnCetak) btnCetak.style.display = "none";
             
+            // Ubah colspan menjadi 6
             tbody.innerHTML = "<tr><td colspan='6' style='padding: 25px; text-align:center; border: 1px solid #d2d2d2;'>Mencari data tunggakan...</td></tr>";
             
-let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;            
+            // Variabel urlAman HAPUS parameter &bulan=...
+            let urlAman = `${API_URL}?action=get_tunggakan&lokasi=${encodeURIComponent(lokasi)}&tahun_ajaran=${encodeURIComponent(tahun)}&_nocache=${new Date().getTime()}`;
+            
             fetch(urlAman)
             .then(res => res.json())
             .then(data => {
