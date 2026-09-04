@@ -1226,7 +1226,7 @@ if (document.getElementById("btnCetakSantri")) {
         e.preventDefault();
         
         let tbody = document.getElementById("tabelDataSantri");
-        let tableContainer = tbody.closest(".content-wrapper > div");
+        let tableContainer = tbody.closest(".content-wrapper > div:last-child") || tbody.closest(".content-wrapper > div");
         
         // Render SEMENTARA seluruh data tanpa tombol Aksi agar PDF rapi
         tbody.innerHTML = "";
@@ -1246,9 +1246,6 @@ if (document.getElementById("btnCetakSantri")) {
         });
 
         // Modifikasi Judul Kolom Sementara
-        let thAksi = document.querySelector("#tabelDataSantri").previousElementSibling.querySelector("th:last-child");
-        let thNoReg = document.querySelector("#tabelDataSantri").previousElementSibling.querySelector("th:first-child");
-        
         let headerAsli = document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML;
         document.querySelector("#tabelDataSantri").previousElementSibling.innerHTML = `
             <tr>
@@ -1279,10 +1276,15 @@ if (document.getElementById("btnCetakSantri")) {
         printStyle.innerHTML = `
             @media print {
                 body { background-color: white !important; margin: 0; padding: 0; }
-                .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3 { display: none !important; }
+                
+                /* Sembunyikan elemen yang tidak perlu termasuk KOTAK FORM (first-child) */
+                .sidebar, .topbar, .user-info, #paginationSantri, #btnCetakSantri, h3, .content-wrapper > div:first-child { 
+                    display: none !important; 
+                }
+                
                 .main-content { margin-left: 0 !important; }
                 .content-wrapper { padding: 0 !important; }
-                .content-wrapper > div { border: none !important; padding: 0 !important; box-shadow: none !important; }
+                .content-wrapper > div:last-child { border: none !important; padding: 0 !important; box-shadow: none !important; }
                 table th, table td { color: #000 !important; font-size: 12px; }
             }
         `;
@@ -1290,7 +1292,7 @@ if (document.getElementById("btnCetakSantri")) {
 
         window.print();
 
-        // Kembalikan ke tampilan normal dengan 15 data per halaman setelah 1 detik
+        // Kembalikan ke tampilan normal setelah cetak
         setTimeout(() => {
             document.head.removeChild(printStyle);
             tableContainer.removeChild(printHeader);
