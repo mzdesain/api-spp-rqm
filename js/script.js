@@ -1262,7 +1262,7 @@ if (document.getElementById("btnCetakTunggakan")) {
     document.getElementById("btnCetakTunggakan").addEventListener("click", function(e) {
         e.preventDefault();
 
-        // 1. Ambil data teks filter
+        // 1. Ambil data teks filter (HANYA LOKASI DAN TAHUN)
         let elLokasi = document.getElementById("filterLokasiTunggakan");
         let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
         let txtTahun = document.getElementById("filterTahunTunggakan").value;
