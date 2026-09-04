@@ -1266,7 +1266,6 @@ if (document.getElementById("btnCetakTunggakan")) {
         let elLokasi = document.getElementById("filterLokasiTunggakan");
         let txtLokasi = elLokasi.options[elLokasi.selectedIndex].text;
         let txtTahun = document.getElementById("filterTahunTunggakan").value;
-        let elBulan = document.getElementById("filterBulanTunggakan");
         let txtBulan = elBulan.options[elBulan.selectedIndex].text;
 
         let tableContainer = document.querySelector(".content-wrapper > div");
@@ -1281,7 +1280,7 @@ if (document.getElementById("btnCetakTunggakan")) {
                 <div style="flex: 1; text-align: center;">
                     <h1 style="margin: 0; font-size: 22px; text-transform: uppercase; color: #000;">Laporan Tunggakan SPP</h1>
                     <h2 style="margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #000;">Rumah Qur'an Mahir</h2>
-                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Tahun Ajaran: ${txtTahun} | Bulan: ${txtBulan}</p>
+                    <p style="margin: 0; font-size: 14px; color: #000;">Lokasi: ${txtLokasi} | Tahun Ajaran: ${txtTahun}</p>
                 </div>
                 <div style="width: 80px;"></div>
             </div>
@@ -1309,15 +1308,18 @@ if (document.getElementById("btnCetakTunggakan")) {
 
         // 4. Modifikasi Tabel Sementara (Hilangkan Kolom WA agar PDF rapi)
         let tfootTh1 = document.querySelector("#rekapTunggakan th:nth-child(1)");
-        if (tfootTh1) tfootTh1.setAttribute("colspan", "2"); 
+        if (tfootTh1) tfootTh1.setAttribute("colspan", "3"); 
 
         let printStyle = document.createElement('style');
         printStyle.innerHTML = `
             @media print {
                 body { background-color: white !important; margin: 0; padding: 0; }
                 .sidebar, .topbar, .user-info { display: none !important; }
-                .content-wrapper > div > div:first-child { display: none !important; } /* Sembunyikan Filter */
-                table th:last-child, table td:last-child { display: none !important; } /* Sembunyikan Kolom WA */
+                .content-wrapper > div > div:first-child { display: none !important; } 
+                
+                /* INI PENTING: Hanya sembunyikan kolom aksi di THEAD dan TBODY agar nominal di TFOOT tidak ikut hilang */
+                thead th:last-child, tbody td:last-child { display: none !important; } 
+                
                 .main-content { margin-left: 0 !important; }
                 .content-wrapper { padding: 0 !important; }
                 .content-wrapper > div { border: none !important; padding: 0 !important; box-shadow: none !important; }
@@ -1330,12 +1332,11 @@ if (document.getElementById("btnCetakTunggakan")) {
 
         window.print();
 
-        // 5. Kembalikan bentuk tabel seperti semula setelah cetak
         setTimeout(() => {
             document.head.removeChild(printStyle);
             tableContainer.removeChild(printHeader);
             tableContainer.removeChild(printFooter);
-            if (tfootTh1) tfootTh1.setAttribute("colspan", "3");
+            if (tfootTh1) tfootTh1.setAttribute("colspan", "4"); // Kembalikan ke 4 kolom setelah selesai cetak
         }, 1000);
     });
 }
