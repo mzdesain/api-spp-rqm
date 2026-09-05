@@ -144,6 +144,36 @@
         </main>
     </div>
 
+    <!-- Modal Edit Santri -->
+<div id="modalEditSantri" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #fff; padding: 20px; width: 400px; border-radius: 4px; font-family: sans-serif;">
+        <h3 style="margin-top: 0;">Edit Data Santri</h3>
+        <form id="formEditSantri">
+            <input type="hidden" id="editRegSantri">
+            <div style="margin-bottom: 10px;">
+                <label>Nama Santri</label>
+                <input type="text" id="editNamaSantri" style="width: 100%; padding: 6px; box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>Lokasi RQM</label>
+                <select id="editLokasiRQM" style="width: 100%; padding: 6px; box-sizing: border-box;" required></select>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>Nominal SPP</label>
+                <input type="number" id="editNominalSPP" style="width: 100%; padding: 6px; box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>WhatsApp</label>
+                <input type="text" id="editWaSantri" style="width: 100%; padding: 6px; box-sizing: border-box;">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="document.getElementById('modalEditSantri').style.display='none'" style="padding: 6px 12px; cursor: pointer;">Batal</button>
+                <button type="submit" id="btnSimpanEdit" style="background: #107c41; color: #fff; border: none; padding: 6px 12px; cursor: pointer;">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
     <!-- Script Utama -->
     <script src="../js/config.js"></script>
     <script src="../js/script.js"></script>

@@ -1313,6 +1313,7 @@ function renderTabelSantri() {
             <td style="padding: 10px 12px; border: 1px solid #d2d2d2;">${item.nomor_whatsapp}</td>
             <td style="text-align: center; padding: 10px 12px; border: 1px solid #d2d2d2;">
                 <button onclick="hapusSantri('${item.nomor_registrasi}')" style="background-color: #c00000; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px; margin-right: 5px;">Hapus</button> 
+                <button onclick="bukaModalEdit('${item.nomor_registrasi}', '${item.nama_santri}', '${item.lokasi}', '${item.nominal_per_bulan}', '${item.nomor_whatsapp}')" style="background-color: #0078d4; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 12px; margin-right: 5px;">Edit</button>
                 <button onclick="toggleStatusSantri('${item.nomor_registrasi}', this)" style="background-color: ${statusSantri === 'Aktif' ? '#107c41' : '#8a8886'}; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 2px;">${statusSantri}</button>
             </td>
         </tr>`;
@@ -1420,7 +1421,7 @@ data.data.forEach(item => {
     if(noWA.startsWith("0")) noWA = "62" + noWA.substring(1);
     
     // Pesan WA Islami yang diperbarui untuk multi-bulan
-    let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah SWT. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* terdapat tagihan yang belum tercatat pada sistem kami, yaitu untuk bulan *${item.rincian_bulan}* (Total: ${item.jml_bulan} Bulan) senilai *Rp ${nominalStr}*.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+    let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSemoga Ayah/Bunda senantiasa dalam lindungan Allah. Kami dari pengurus Rumah Qur'an Mahir (RQM) memohon maaf mengganggu waktunya.\n\nKami menginformasikan bahwa untuk SPP ananda *${item.nama_santri}* terdapat tagihan yang belum tercatat pada sistem kami, yaitu untuk bulan *${item.rincian_bulan}* (Total: ${item.jml_bulan} Bulan) senilai *Rp ${nominalStr}*.\n\nMohon perkenan Ayah/Bunda untuk mengecek kembali. Apabila sudah melakukan pembayaran, mohon konfirmasinya agar dapat segera kami catat. Apabila belum, mohon kiranya dapat segera ditunaikan.\n\nSyukron wajazaakumullahu khairan.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
     
     let linkWA = noWA ? `<a href="https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}" target="_blank" style="background-color: #25D366; color: white; padding: 5px 10px; text-decoration: none; border-radius: 2px; font-weight: 600;">Tagih via WA</a>` : `<span style="color:#c00000; font-size:12px;">WA Kosong</span>`;
 
@@ -1904,4 +1905,52 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 1000);
         });
     }
+});
+
+window.bukaModalEdit = function(noReg, nama, lokasi, nominal, wa) {
+    document.getElementById('editRegSantri').value = noReg;
+    document.getElementById('editNamaSantri').value = nama;
+    document.getElementById('editNominalSPP').value = nominal;
+    document.getElementById('editWaSantri').value = wa;
+    
+    // Copy options dari select tambah santri ke select edit
+    let selectTambah = document.getElementById('lokasiRQM');
+    let selectEdit = document.getElementById('editLokasiRQM');
+    if(selectTambah && selectEdit) {
+        selectEdit.innerHTML = selectTambah.innerHTML;
+        selectEdit.value = lokasi;
+    }
+    
+    document.getElementById('modalEditSantri').style.display = 'flex';
+};
+
+document.getElementById('formEditSantri').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let btnSimpan = document.getElementById('btnSimpanEdit');
+    btnSimpan.textContent = 'Menyimpan...';
+    btnSimpan.disabled = true;
+
+    const dataEdit = {
+        action: 'edit_santri',
+        nomor_registrasi: document.getElementById('editRegSantri').value,
+        nama_santri: document.getElementById('editNamaSantri').value,
+        lokasi_rqm: document.getElementById('editLokasiRQM').value,
+        nominal_spp: document.getElementById('editNominalSPP').value,
+        nomor_whatsapp: document.getElementById('editWaSantri').value
+    };
+
+    fetch(API_URL, { method: 'POST', body: JSON.stringify(dataEdit) })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('modalEditSantri').style.display = 'none';
+        btnSimpan.textContent = 'Simpan Perubahan';
+        btnSimpan.disabled = false;
+        alert(data.message);
+        // Refresh tabel santri (Panggil fungsi refresh tabelmu di sini jika ada, misal: muatDataSantri())
+        location.reload(); 
+    }).catch(err => {
+        btnSimpan.textContent = 'Simpan Perubahan';
+        btnSimpan.disabled = false;
+        alert("Gagal menghubungi server.");
+    });
 });
