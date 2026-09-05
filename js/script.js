@@ -360,6 +360,22 @@ document.addEventListener("DOMContentLoaded", function() {
         formTambahPembayaran.addEventListener("submit", function(e) {
             e.preventDefault(); 
             
+            // --- KODE CHECKBOX BULAN DIMASUKKAN DI SINI ---
+            let checkboxBulan = document.querySelectorAll('input[name="bulanSPP"]:checked');
+            let arrayBulan = [];
+            checkboxBulan.forEach((cb) => {
+                arrayBulan.push(cb.value);
+            });
+
+            if (arrayBulan.length === 0) {
+                alert("Silakan centang minimal satu bulan pembayaran!");
+                return; // Hentikan proses jika tidak ada bulan yang dipilih
+            }
+
+            // Menggabungkan bulan menjadi satu teks (Contoh: "Januari, Februari, Maret")
+            let bulan = arrayBulan.join(", ");
+            // ----------------------------------------------
+
             const btnSimpan = document.getElementById("btnSimpanBayar");
             const pesanArea = document.getElementById("pesanBayar");
             
@@ -368,13 +384,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 nomor_registrasi: document.getElementById("regBayar").value,
                 tanggal_pembayaran: document.getElementById("tglBayar").value,
                 tahun_ajaran: document.getElementById("tahunAjaranBayar").value,
-                bulan_pembayaran: document.getElementById("bulanBayar").value,
+                bulan_pembayaran: bulan, // <-- UBAH BAGIAN INI UNTUK MEMANGGIL VARIABEL BULAN DI ATAS
                 nominal_pembayaran: document.getElementById("nominalBayar").value
             };
             
             btnSimpan.textContent = "Menyimpan...";
             btnSimpan.disabled = true;
             pesanArea.style.display = "none";
+            
+            // Kirim POST request
+            // ... (kode fetch ke bawah dibiarkan sama persis tidak ada yang diubah)
             
             // Kirim POST request
             fetch(API_URL, {
